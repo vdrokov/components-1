@@ -55,7 +55,7 @@ public class AzureStorageContainerRuntime extends AzureStorageRuntime {
             errorMessage = messages.getMessage("error.IncorrectName");
         }
         // all lowercase
-        else if (!StringUtils.isAllLowerCase(containerName.replaceAll("(-|\\d)", ""))) {
+        else if (!containerName.toLowerCase().equals(containerName)) {
             errorMessage = messages.getMessage("error.UppercaseName");
         }
         // length range : 3-63
