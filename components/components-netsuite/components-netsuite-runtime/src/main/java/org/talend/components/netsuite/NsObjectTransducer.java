@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -17,6 +17,7 @@ import static org.talend.components.netsuite.client.model.beans.Beans.getEnumAcc
 import static org.talend.components.netsuite.client.model.beans.Beans.getProperty;
 import static org.talend.components.netsuite.client.model.beans.Beans.getSimpleProperty;
 import static org.talend.components.netsuite.client.model.beans.Beans.setSimpleProperty;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,8 @@ import org.talend.components.netsuite.client.model.TypeDesc;
 import org.talend.components.netsuite.client.model.beans.BeanInfo;
 import org.talend.components.netsuite.client.model.beans.Beans;
 import org.talend.components.netsuite.client.model.customfield.CustomFieldRefType;
+import org.talend.components.netsuite.client.model.customfield.ListOrRecord;
+import org.talend.components.netsuite.client.model.customfield.MultiSelectCustomField;
 import org.talend.components.netsuite.json.NsTypeResolverBuilder;
 import org.talend.daikon.avro.AvroRegistry;
 import org.talend.daikon.avro.converter.AvroConverter;
@@ -294,6 +297,9 @@ public abstract class NsObjectTransducer {
         if (fieldDesc instanceof CustomFieldDesc) {
             Object customField = valueMap.get(fieldName);
             if (customField != null) {
+                if (((CustomFieldDesc) fieldDesc).getCustomFieldType() == CustomFieldRefType.MULTI_SELECT) {
+                    return readMultiSelectField(customField);
+                }
                 Object value = getSimpleProperty(customField, "value");
                 return valueConverter.convertToAvro(value);
             }
@@ -302,6 +308,31 @@ public abstract class NsObjectTransducer {
             Object value = valueMap.get(fieldName);
             return valueConverter.convertToAvro(value);
         }
+    }
+
+    /**
+     * Transform NetSuite MultiSelectCustomFieldRef object to {@link MultiSelectCustomField} to remove unneeded values.
+     *
+     * @param customField MultiSelectCustomFieldRef object
+     * @return String representation of serialized {@link MultiSelectCustomField} object.
+     */
+    private Object readMultiSelectField(Object customField) {
+        Object value = getSimpleProperty(customField, "value");
+        MultiSelectCustomField multiSelectCustomField = new MultiSelectCustomField();
+        List<ListOrRecord> listValues = convertListType((List) value);
+        multiSelectCustomField.setValue(listValues);
+        AvroConverter converter = getValueConverter(MultiSelectCustomField.class);
+        return converter.convertToAvro(multiSelectCustomField);
+    }
+
+    /**
+     * Converts ListOrRecordRef objects to {@link ListOrRecord}
+     *
+     * @param rawList list of ListOrRecordRef
+     * @return list of {@link ListOrRecord}
+     */
+    private List<ListOrRecord> convertListType(List rawList) {
+        return (List<ListOrRecord>) rawList.stream().map(ListOrRecord::fromObject).collect(toList());
     }
 
     /**
@@ -371,6 +402,10 @@ public abstract class NsObjectTransducer {
                 customFieldList.remove(customField);
                 nullFieldNames.add(fieldDesc.getName());
             }
+        } else if (fieldDesc.getCustomFieldType() == CustomFieldRefType.MULTI_SELECT) {
+            setSimpleProperty(targetValue, "scriptId", ref.getScriptId());
+            setSimpleProperty(targetValue, "internalId", ref.getInternalId());
+            customFieldList.add(targetValue);
         } else {
             if (customField == null) {
                 // Custom field instance doesn't exist,
@@ -442,9 +477,10 @@ public abstract class NsObjectTransducer {
             valueClass = getPicklistClass();
             break;
         case MULTI_SELECT:
-        default:
-            valueClass = null;
+            valueClass = getMultiSelectClass();
             break;
+        default:
+            throw new IllegalArgumentException("There is no available type converter for field " + customFieldRefType.name());
         }
         return valueClass;
     }
@@ -474,9 +510,9 @@ public abstract class NsObjectTransducer {
         }
         return converter;
     }
-    
+
     protected abstract String getApiVersion();
-    
+
     public Class<?> getPicklistClass(){
         String version = getApiVersion();
         String pattern = "20\\d{2}\\.\\d+";
@@ -491,6 +527,16 @@ public abstract class NsObjectTransducer {
             return valueClass;
         }
         return null;
+    }
+
+    public Class<?> getMultiSelectClass() {
+        try {
+            return Class.forName(
+                    "com.netsuite.webservices.v" + getApiVersion().replace('.', '_') + ".platform.core.MultiSelectCustomFieldRef");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Cannot load class com.netsuite.webservices.v" + getApiVersion().replace('.', '_')
+                    + ".platform.core.MultiSelectCustomFieldRef");
+        }
     }
 
     /**
