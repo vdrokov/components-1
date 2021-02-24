@@ -169,6 +169,41 @@ public class SalesforceConnectionPropertiesTest extends SalesforceTestBase {
         }
     }
 
+    @Test
+    public void testMutualAuth() {
+        properties.init();
+
+        reset(properties);
+
+        properties.loginType.setValue(SalesforceConnectionProperties.LoginType.OAuth);
+        properties.oauth2FlowType.setValue(OAuth2FlowType.JWT_Flow);
+        properties.afterLoginType();
+        verify(properties, times(3)).refreshLayout(any(Form.class));
+
+        Form mainForm = properties.getForm(Form.MAIN);
+        Form sslForm = mainForm.getChildForm(properties.sslProperties.getName());
+        assertFalse(sslForm.getWidget(properties.sslProperties.mutualAuth.getName()).isVisible());
+        assertFalse(sslForm.getWidget(properties.sslProperties.keyStorePath.getName()).isVisible());
+        assertFalse(sslForm.getWidget(properties.sslProperties.keyStorePwd.getName()).isVisible());
+
+        properties.loginType.setValue(SalesforceConnectionProperties.LoginType.Basic);
+        properties.afterLoginType();
+        mainForm = properties.getForm(Form.MAIN);
+        sslForm = mainForm.getChildForm(properties.sslProperties.getName());
+        assertTrue(sslForm.getWidget(properties.sslProperties.mutualAuth.getName()).isVisible());
+        assertFalse(sslForm.getWidget(properties.sslProperties.keyStorePath.getName()).isVisible());
+        assertFalse(sslForm.getWidget(properties.sslProperties.keyStorePwd.getName()).isVisible());
+
+        properties.sslProperties.mutualAuth.setValue(true);
+        properties.sslProperties.afterMutualAuth();
+        mainForm = properties.getForm(Form.MAIN);
+        sslForm = mainForm.getChildForm(properties.sslProperties.getName());
+        assertTrue(sslForm.getWidget(properties.sslProperties.keyStorePath.getName()).isVisible());
+        assertTrue(sslForm.getWidget(properties.sslProperties.keyStorePwd.getName()).isVisible());
+
+
+    }
+
     private void testLoginTypeWidgets(Form form) {
         assertFalse(form.getWidget(properties.userPassword.getName()).isVisible());
 

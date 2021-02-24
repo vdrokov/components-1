@@ -115,6 +115,8 @@ public class SalesforceConnectionProperties extends ComponentPropertiesImpl
 
     public SalesforceUserPasswordProperties userPassword = new SalesforceUserPasswordProperties("userPassword");
 
+    public SalesforceSSLProperties sslProperties = new SalesforceSSLProperties("sslProperties");
+
     public ProxyProperties proxy = new ProxyProperties("proxy");
 
     public ComponentReferenceProperties<SalesforceConnectionProperties> referencedComponent =
@@ -146,6 +148,7 @@ public class SalesforceConnectionProperties extends ComponentPropertiesImpl
         wizardForm.addRow(oauth2JwtFlow.getForm(Form.MAIN));
         wizardForm.addRow(oauth.getForm(Form.MAIN));
         wizardForm.addRow(userPassword.getForm(Form.MAIN));
+        wizardForm.addRow(sslProperties.getForm(Form.MAIN));
         wizardForm.addRow(widget(advanced).setWidgetType(Widget.BUTTON_WIDGET_TYPE));
         wizardForm.addColumn(widget(testConnection).setLongRunning(true).setWidgetType(Widget.BUTTON_WIDGET_TYPE));
 
@@ -155,6 +158,7 @@ public class SalesforceConnectionProperties extends ComponentPropertiesImpl
         mainForm.addRow(oauth2JwtFlow.getForm(Form.MAIN));
         mainForm.addRow(oauth.getForm(Form.MAIN));
         mainForm.addRow(userPassword.getForm(Form.MAIN));
+        mainForm.addRow(sslProperties.getForm(Form.MAIN));
 
         Form advancedForm = Form.create(this, Form.ADVANCED);
         advancedForm.addRow(endpoint);
@@ -233,16 +237,26 @@ public class SalesforceConnectionProperties extends ComponentPropertiesImpl
                 form.getWidget(loginType.getName()).setHidden(true);
                 hideOauth2Properties(form, true);
                 form.getWidget(userPassword).setHidden(true);
+                form.getWidget(sslProperties).setHidden(true);
             } else {
                 form.getWidget(loginType.getName()).setHidden(false);
                 switch (loginType.getValue()) {
                 case Basic:
                     hideOauth2Properties(form, true);
                     form.getWidget(userPassword).setHidden(false);
+                    form.getWidget(sslProperties).setHidden(false);
+                    Form sslForm = form.getChildForm(sslProperties.getName());
+                    if (sslForm != null) {
+                        boolean isMutualAuth = sslProperties.mutualAuth.getValue();
+                        sslForm.getWidget(sslProperties.mutualAuth.getName()).setVisible(true);
+                        sslForm.getWidget(sslProperties.keyStorePath.getName()).setVisible(isMutualAuth);
+                        sslForm.getWidget(sslProperties.keyStorePwd.getName()).setVisible(isMutualAuth);
+                    }
                     break;
                 case OAuth:
                     refreshOauth2Properties(form);
                     form.getWidget(userPassword).setHidden(true);
+                    form.getWidget(sslProperties).setHidden(true);
                     break;
                 default:
                     throw new ComponentException(
@@ -265,6 +279,7 @@ public class SalesforceConnectionProperties extends ComponentPropertiesImpl
                 form.getWidget(sessionDirectory.getName()).setVisible(
                         isBasicLogin && !bulkMode && reuseSession.getValue());
                 form.getWidget(apiVersion.getName()).setHidden(isBasicLogin);
+                // TODO chek oauth type
 
                 Form proxyForm = form.getChildForm(proxy.getName());
                 if (proxyForm != null) {
