@@ -175,8 +175,8 @@ public class GoogleDriveRuntime extends GoogleDriveValidator
 
     public Drive getDriveService() throws GeneralSecurityException, IOException {
         if (service == null) {
-            service = new GoogleDriveService(getApplicationName(), getHttpTransport(), getCredential(getHttpTransport()))
-                    .getDriveService();
+            service = new GoogleDriveService(getApplicationName(), getHttpTransport(), getCredential(getHttpTransport()),
+                    getConnectionProperties().readTimeout.getValue()).getDriveService();
         }
         return service;
     }

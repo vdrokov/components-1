@@ -23,6 +23,7 @@ import static org.talend.daikon.properties.property.PropertyFactory.newInteger;
 import static org.talend.daikon.properties.property.PropertyFactory.newString;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import org.slf4j.Logger;
@@ -43,12 +44,16 @@ import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
 import org.talend.daikon.properties.service.Repository;
 import org.talend.daikon.sandbox.SandboxedInstance;
+import org.talend.daikon.serialize.PostDeserializeSetup;
+import org.talend.daikon.serialize.migration.SerializeSetVersion;
 
-public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl implements GoogleDriveProvideConnectionProperties {
+public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl implements GoogleDriveProvideConnectionProperties, SerializeSetVersion {
 
     public static final String FORM_WIZARD = "Wizard";
 
     public static final String PATH_CREDENTIALS_TALEND_GOOGLEDRIVE = ".credentials/talend-googledrive";
+
+    public static final int DEFAULT_READ_TIMEOUT = 30;
 
     public Property<String> name = newString("name").setRequired();
 
@@ -101,6 +106,8 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
     // datastore to persist the credential's access token and/or refresh token.
     public Property<String> datastorePath = newString("datastorePath");
 
+    public Property<Integer> readTimeout = newInteger("readTimeout");
+
     //
     public PresentationItem testConnection = new PresentationItem("testConnection", "Test connection");
 
@@ -135,6 +142,8 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
         //
         useSSL.setValue(false);
         sslAlgorithm.setValue("SSL");
+        //
+        readTimeout.setValue(DEFAULT_READ_TIMEOUT);
     }
 
     @Override
@@ -161,6 +170,7 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
         // Advanced form
         Form advancedForm = Form.create(this, Form.ADVANCED);
         advancedForm.addRow(widget(datastorePath).setWidgetType(Widget.DIRECTORY_WIDGET_TYPE));
+        advancedForm.addRow(readTimeout);
         // A form for a reference to a connection
         Form refForm = Form.create(this, Form.REFERENCE);
         Widget compListWidget = widget(referencedComponent).setWidgetType(Widget.COMPONENT_REFERENCE_WIDGET_TYPE);
@@ -178,6 +188,7 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
         wizardForm.addRow(widget(serviceAccountFile).setWidgetType(Widget.FILE_WIDGET_TYPE));
         //
         wizardForm.addRow(widget(datastorePath).setWidgetType(Widget.DIRECTORY_WIDGET_TYPE));
+        wizardForm.addRow(readTimeout);
         //
         wizardForm.addRow(useProxy);
         wizardForm.addRow(proxyHost);
@@ -252,6 +263,7 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
             boolean showDS = InstalledApplicationWithIdAndSecret.equals(oAuthMethod.getValue())
                     || InstalledApplicationWithJSON.equals(oAuthMethod.getValue()) && !useOtherConnection;
             form.getWidget(datastorePath.getName()).setVisible(showDS);
+            form.getWidget(readTimeout.getName()).setHidden(useOtherConnection);
         }
     }
 
@@ -363,6 +375,21 @@ public class GoogleDriveConnectionProperties extends ComponentPropertiesImpl imp
         } catch (Exception e) {
             return new ValidationResult(Result.ERROR, e.getMessage());
         }
+    }
+
+    @Override
+    public boolean postDeserialize(int version, PostDeserializeSetup setup, boolean persistent) {
+        boolean migrated = super.postDeserialize(version, setup, persistent);
+        if (version < 1 && readTimeout.getValue() == null) {
+            readTimeout.setValue(DEFAULT_READ_TIMEOUT);
+            migrated = true;
+        }
+        return migrated;
+    }
+
+    @Override
+    public int getVersionNumber() {
+        return 1;
     }
 
 }
