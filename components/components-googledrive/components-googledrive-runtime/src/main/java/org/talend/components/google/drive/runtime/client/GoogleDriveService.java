@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
@@ -27,6 +29,8 @@ public class GoogleDriveService {
     private NetHttpTransport httpTransport;
 
     private Credential credential;
+
+    private Integer readTimeout;
 
     public Credential getCredential() {
         return credential;
@@ -52,10 +56,23 @@ public class GoogleDriveService {
         this.httpTransport = httpTransport;
     }
 
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(Integer readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     public GoogleDriveService(String applicationName, NetHttpTransport httpTransport, Credential credential) {
+        this(applicationName, httpTransport, credential, null);
+    }
+
+    public GoogleDriveService(String applicationName, NetHttpTransport httpTransport, Credential credential, Integer readTimeout) {
         this.applicationName = applicationName;
         this.credential = credential;
         this.httpTransport = httpTransport;
+        this.readTimeout = readTimeout;
     }
 
     /**
@@ -66,8 +83,17 @@ public class GoogleDriveService {
      * @throws IOException when credentials fails
      */
     public Drive getDriveService() throws GeneralSecurityException, IOException {
-        return new Drive.Builder(getHttpTransport(), JacksonFactory.getDefaultInstance(), getCredential())
+        return new Drive.Builder(getHttpTransport(), JacksonFactory.getDefaultInstance(), setHttpTimeout(getCredential()))
                 .setApplicationName(getApplicationName()).build();
+    }
+
+    private HttpRequestInitializer setHttpTimeout(final HttpRequestInitializer requestInitializer) {
+        return readTimeout != null ? new HttpRequestInitializer()  {
+            public void initialize(HttpRequest httpRequest) throws IOException {
+                requestInitializer.initialize(httpRequest);
+                httpRequest.setReadTimeout(readTimeout * 1000);
+            }
+        } : requestInitializer;
     }
 
 }

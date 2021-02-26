@@ -61,6 +61,7 @@ public class GoogleDriveConnectionPropertiesTest extends GoogleDriveTestBase {
         assertTrue(properties.getForm(Form.MAIN).getWidget(properties.oAuthMethod.getName()).isHidden());
         assertTrue(properties.getForm(Form.MAIN).getWidget(properties.applicationName.getName()).isHidden());
         assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.datastorePath.getName()).isHidden());
+        assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.readTimeout.getName()).isHidden());
     }
 
     @Test
@@ -117,6 +118,13 @@ public class GoogleDriveConnectionPropertiesTest extends GoogleDriveTestBase {
         assertTrue(properties.getForm(Form.MAIN).getWidget(properties.sslAlgorithm.getName()).isVisible());
         assertTrue(properties.getForm(Form.MAIN).getWidget(properties.sslTrustStore.getName()).isVisible());
         assertTrue(properties.getForm(Form.MAIN).getWidget(properties.sslTrustStorePassword.getName()).isVisible());
+    }
+
+    @Test
+    public void testReadTimeoutVisible() {
+        properties.referencedComponent.componentInstanceId.setValue(null);
+        properties.afterReferencedComponent();
+        assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.readTimeout.getName()).isVisible());
     }
 
     @Test
