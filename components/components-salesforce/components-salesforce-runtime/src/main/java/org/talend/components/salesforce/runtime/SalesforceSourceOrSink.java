@@ -133,7 +133,7 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
          */
         ConnectorConfig bulkConfig = new ConnectorConfig();
         setProxy(bulkConfig);
-        if(bulkConfig.getSslContext()!=null){
+        if (config.getSslContext() != null) {
             bulkConfig.setSslContext(config.getSslContext());
         }
         bulkConfig.setSessionId(config.getSessionId());
