@@ -17,6 +17,15 @@
 			},
 			{
 				"component": "tJDBCRollback"
+			},
+			{
+				"component": "tJDBCOutputBulk"
+			},
+			{
+				"component": "tJDBCBulkExec"
+			},
+			{
+				"component": "tJDBCOutputBulkExec"
 			}
 		],
 		"configuration": [{
