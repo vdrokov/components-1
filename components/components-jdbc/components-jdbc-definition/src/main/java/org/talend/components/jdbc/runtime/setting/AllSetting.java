@@ -92,7 +92,29 @@ public class AllSetting implements Serializable, JDBCAvroRegistryInfluencer {
     private ComponentProperties referencedComponentProperties;
 
     private Boolean enableSpecialTableName = false;
-
+    
+    public String bulkFile;
+    
+    public boolean append;
+    
+    public String rowSeparator;
+    
+    public String fieldSeparator;
+    
+    public boolean setNullValue;
+    
+    public String nullValue;
+    
+    public boolean includeHeader;
+    
+    public boolean setTextEnclosure;
+    
+    public boolean setEscapeChar;
+    
+    public String textEnclosure;
+    
+    public String escapeChar;
+    
     public String getJdbcUrl() {
         return jdbcUrl;
     }

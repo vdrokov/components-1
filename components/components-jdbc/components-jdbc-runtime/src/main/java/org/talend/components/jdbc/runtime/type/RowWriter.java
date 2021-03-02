@@ -15,6 +15,7 @@ import org.apache.avro.generic.IndexedRecord;
 import org.talend.components.jdbc.CommonUtils;
 import org.talend.components.jdbc.runtime.setting.JDBCSQLBuilder;
 import org.talend.daikon.avro.AvroUtils;
+import org.talend.daikon.avro.SchemaConstants;
 
 public class RowWriter {
 
@@ -46,7 +47,7 @@ public class RowWriter {
 
             Field componentField = CommonUtils.getField(currentSchema, column.columnLabel);
             int inputValueLocation = inputField.pos();
-            String pattern = componentField.getProp("talend.field.pattern");
+            String pattern = componentField.getProp(SchemaConstants.TALEND_COLUMN_PATTERN);
             statementIndex++;
 
             Schema basicSchema = AvroUtils.unwrapIfNullable(componentField.schema());
