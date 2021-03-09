@@ -1,0 +1,487 @@
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective settings
+[WARNING] Unrecognised tag: 'repositories' (position: START_TAG seen ...http://maven.apache.org/xsd/settings-1.0.0.xsd">\n\n  <repositories>... @50:17)  @ /Users/wangwei/.m2/settings.xml, line 50, column 17
+[WARNING] 'servers.server.id' must be unique but found duplicate server with id talend.releases @ /Users/wangwei/.m2/settings.xml
+[WARNING] 
+[INFO] Scanning for projects...
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-bom/0.30.1-SNAPSHOT/maven-metadata.xml
+Progress (1): 614 B                   Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-bom/0.30.1-SNAPSHOT/maven-metadata.xml (614 B at 560 B/s)
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-bom/0.30.1-SNAPSHOT/components-bom-0.30.1-20210304.083659-2.pom
+Progress (1): 4.1/79 kBProgress (1): 7.7/79 kBProgress (1): 12/79 kB Progress (1): 16/79 kBProgress (1): 20/79 kBProgress (1): 24/79 kBProgress (1): 28/79 kBProgress (1): 32/79 kBProgress (1): 36/79 kBProgress (1): 40/79 kBProgress (1): 45/79 kBProgress (1): 49/79 kBProgress (1): 53/79 kBProgress (1): 57/79 kBProgress (1): 61/79 kBProgress (1): 65/79 kBProgress (1): 69/79 kBProgress (1): 73/79 kBProgress (1): 77/79 kBProgress (1): 79 kB                      Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-bom/0.30.1-SNAPSHOT/components-bom-0.30.1-20210304.083659-2.pom (79 kB at 99 kB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Components - MarkLogic Definition                               [bundle]
+[INFO] Components - MarkLogic Runtime                                     [jar]
+[INFO] Components - MarkLogic Aggregator                                  [pom]
+[INFO] 
+[INFO] -------< org.talend.components:components-marklogic-definition >--------
+[INFO] Building Components - MarkLogic Definition 0.30.1-SNAPSHOT         [1/3]
+[INFO] -------------------------------[ bundle ]-------------------------------
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-api/0.30.1-SNAPSHOT/components-api-0.30.1-20210304.083725-2.pom
+Progress (1): 4.1/8.2 kBProgress (1): 7.7/8.2 kBProgress (1): 8.2 kB                        Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-api/0.30.1-SNAPSHOT/components-api-0.30.1-20210304.083725-2.pom (8.2 kB at 19 kB/s)
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-parent/0.30.1-SNAPSHOT/maven-metadata.xml
+Progress (1): 617 B                   Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-parent/0.30.1-SNAPSHOT/maven-metadata.xml (617 B at 1.3 kB/s)
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-parent/0.30.1-SNAPSHOT/components-parent-0.30.1-20210304.083705-2.pom
+Progress (1): 4.1/20 kBProgress (1): 7.7/20 kBProgress (1): 12/20 kB Progress (1): 16/20 kBProgress (1): 20/20 kBProgress (1): 20 kB                      Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-parent/0.30.1-SNAPSHOT/components-parent-0.30.1-20210304.083705-2.pom (20 kB at 44 kB/s)
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-common/0.30.1-SNAPSHOT/components-common-0.30.1-20210304.083910-2.pom
+Progress (1): 4.1/8.7 kBProgress (1): 7.7/8.7 kBProgress (1): 8.7 kB                        Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-common/0.30.1-SNAPSHOT/components-common-0.30.1-20210304.083910-2.pom (8.7 kB at 20 kB/s)
+Downloading from spring-releases: https://repo.spring.io/libs-release/org/talend/components/components-api-service-common/0.30.1-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata org.talend.components:components-api-service-common:0.30.1-SNAPSHOT/maven-metadata.xml from/to spring-releases (https://repo.spring.io/libs-release/): Not authorized
+[WARNING] Failure to transfer org.talend.components:components-api-service-common:0.30.1-SNAPSHOT/maven-metadata.xml from https://repo.spring.io/libs-release/ was cached in the local repository, resolution will not be reattempted until the update interval of spring-releases has elapsed or updates are forced. Original error: Could not transfer metadata org.talend.components:components-api-service-common:0.30.1-SNAPSHOT/maven-metadata.xml from/to spring-releases (https://repo.spring.io/libs-release/): Not authorized
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-api-service-common/0.30.1-SNAPSHOT/components-api-service-common-0.30.1-20210304.083801-2.pom
+Progress (1): 4.1/5.4 kBProgress (1): 5.4 kB                        Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-api-service-common/0.30.1-SNAPSHOT/components-api-service-common-0.30.1-20210304.083801-2.pom (5.4 kB at 12 kB/s)
+Downloading from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-osgitest/0.30.1-SNAPSHOT/components-osgitest-0.30.1-20210304.083851-2.pom
+Progress (1): 4.1/8.1 kBProgress (1): 7.7/8.1 kBProgress (1): 8.1 kB                        Downloaded from talend_nexus: https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/org/talend/components/components-osgitest/0.30.1-SNAPSHOT/components-osgitest-0.30.1-20210304.083851-2.pom (8.1 kB at 17 kB/s)
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.10:tree (default-cli) @ components-marklogic-definition ---
+[INFO] org.talend.components:components-marklogic-definition:bundle:0.30.1-SNAPSHOT
+[INFO] +- org.talend.components:components-api:jar:0.30.1-SNAPSHOT:compile
+[INFO] |  +- org.talend.daikon:daikon:jar:0.31.11:compile
+[INFO] |  +- org.talend.daikon:crypto-utils:jar:0.31.11:compile
+[INFO] |  |  +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+[INFO] |  |  |  +- commons-logging:commons-logging:jar:1.2:compile
+[INFO] |  |  |  \- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  \- org.apache.commons:commons-configuration2:jar:2.0:compile
+[INFO] |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  +- joda-time:joda-time:jar:2.8.2:compile
+[INFO] |  +- org.ops4j.pax.url:pax-url-aether:jar:2.6.2:compile
+[INFO] |  |  \- org.ops4j.pax.url:pax-url-aether-support:jar:2.6.2:compile
+[INFO] |  |     \- org.apache.maven.resolver:maven-resolver-impl:jar:1.3.1:compile
+[INFO] |  |        +- org.apache.maven.resolver:maven-resolver-api:jar:1.3.1:compile
+[INFO] |  |        +- org.apache.maven.resolver:maven-resolver-spi:jar:1.3.1:compile
+[INFO] |  |        \- org.apache.maven.resolver:maven-resolver-util:jar:1.3.1:compile
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.25:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.25:compile
+[INFO] +- org.osgi:org.osgi.service.component.annotations:jar:1.3.0:provided
+[INFO] +- com.google.auto.service:auto-service:jar:1.0-rc2:compile
+[INFO] |  +- com.google.auto:auto-common:jar:0.3:compile
+[INFO] |  \- com.google.guava:guava:jar:30.0-jre:compile
+[INFO] |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |     +- com.google.code.findbugs:jsr305:jar:1.3.9:compile
+[INFO] |     +- org.checkerframework:checker-qual:jar:3.5.0:compile
+[INFO] |     +- com.google.errorprone:error_prone_annotations:jar:2.3.4:compile
+[INFO] |     \- com.google.j2objc:j2objc-annotations:jar:1.3:compile
+[INFO] +- org.talend.components:components-common:jar:0.30.1-SNAPSHOT:compile
+[INFO] |  \- net.sourceforge.javacsv:javacsv:jar:2.0:compile
+[INFO] +- org.talend.components:components-common:jar:bundle:0.30.1-SNAPSHOT:test
+[INFO] +- org.talend.components:components-api:jar:tests:0.30.1-SNAPSHOT:test
+[INFO] +- org.talend.components:components-api-service-rest:jar:lib:0.28.14:test
+[INFO] |  +- javax.activation:activation:jar:1.1.1:test
+[INFO] |  +- javax.xml.bind:jaxb-api:jar:2.3.1:test
+[INFO] |  |  \- javax.activation:javax.activation-api:jar:1.2.0:test
+[INFO] |  +- org.glassfish.jaxb:jaxb-runtime:jar:2.3.1:test
+[INFO] |  |  +- org.glassfish.jaxb:txw2:jar:2.3.1:test
+[INFO] |  |  +- com.sun.istack:istack-commons-runtime:jar:3.0.7:test
+[INFO] |  |  +- org.jvnet.staxex:stax-ex:jar:1.8:test
+[INFO] |  |  \- com.sun.xml.fastinfoset:FastInfoset:jar:1.2.15:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter-jetty:jar:1.5.1.RELEASE:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.33.v20201020:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.33.v20201020:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.33.v20201020:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.33.v20201020:test
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.33.v20201020:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.33.v20201020:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-xml:jar:9.4.33.v20201020:test
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-servlet:jar:9.4.33.v20201020:test
+[INFO] |  |  |     \- org.eclipse.jetty:jetty-security:jar:9.4.33.v20201020:test
+[INFO] |  |  |        \- org.eclipse.jetty:jetty-server:jar:9.4.33.v20201020:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.1.v20170120:test
+[INFO] |  |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.1.v20170120:test
+[INFO] |  |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.1.v20170120:test
+[INFO] |  |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.1.v20170120:test
+[INFO] |  |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.33.v20201020:test
+[INFO] |  |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.1.v20170120:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.1.v20170120:test
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-annotations:jar:9.4.33.v20201020:test
+[INFO] |  |  |  |  +- org.eclipse.jetty:jetty-plus:jar:9.4.33.v20201020:test
+[INFO] |  |  |  |  +- javax.annotation:javax.annotation-api:jar:1.3:test
+[INFO] |  |  |  |  +- org.ow2.asm:asm:jar:9.0:test
+[INFO] |  |  |  |  \- org.ow2.asm:asm-commons:jar:9.0:test
+[INFO] |  |  |  |     +- org.ow2.asm:asm-tree:jar:9.0:test
+[INFO] |  |  |  |     \- org.ow2.asm:asm-analysis:jar:9.0:test
+[INFO] |  |  |  +- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.1.v20170120:test
+[INFO] |  |  |  \- javax.websocket:javax.websocket-api:jar:1.0:test
+[INFO] |  |  \- org.mortbay.jasper:apache-el:jar:8.0.33:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter-web:jar:1.5.22.RELEASE:test
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter:jar:1.5.22.RELEASE:test
+[INFO] |  |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:1.5.22.RELEASE:test
+[INFO] |  |  |  \- org.yaml:snakeyaml:jar:1.26:test
+[INFO] |  |  +- org.hibernate:hibernate-validator:jar:5.3.6.Final:test
+[INFO] |  |  |  +- javax.validation:validation-api:jar:1.1.0.Final:test
+[INFO] |  |  |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:test
+[INFO] |  |  |  \- com.fasterxml:classmate:jar:1.3.3:test
+[INFO] |  |  +- org.springframework:spring-web:jar:4.3.25.RELEASE:test
+[INFO] |  |  \- org.springframework:spring-webmvc:jar:4.3.25.RELEASE:test
+[INFO] |  +- javax.servlet:javax.servlet-api:jar:3.1.0:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-actuator:jar:1.5.1.RELEASE:test
+[INFO] |  |  \- org.springframework.boot:spring-boot-actuator:jar:1.5.1.RELEASE:test
+[INFO] |  +- org.talend.components:components-api-service-spi:jar:0.28.14:test
+[INFO] |  |  \- org.talend.components:components-api-service-common:jar:0.30.1-SNAPSHOT:test
+[INFO] |  +- commons-io:commons-io:jar:2.5:test
+[INFO] |  +- org.talend.daikon:logging-event-layout:jar:0.31.10:test
+[INFO] |  |  +- net.minidev:json-smart:jar:2.3:test
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:1.2:test
+[INFO] |  |  \- commons-lang:commons-lang:jar:2.6:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.11.4:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.4:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.11.4:compile
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-scala_2.11:jar:2.11.4:test
+[INFO] |  |  +- org.scala-lang:scala-library:jar:2.11.11:test
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-paranamer:jar:2.11.4:test
+[INFO] |  +- org.slf4j:jul-to-slf4j:jar:1.7.25:test
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.12:compile
+[INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
+[INFO] |  +- org.apache.httpcomponents:httpmime:jar:4.5.12:test
+[INFO] |  +- org.apache.httpcomponents:httpasyncclient:jar:4.1.2:test
+[INFO] |  +- org.apache.httpcomponents:httpcore-nio:jar:4.4.5:test
+[INFO] |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.14-TALEND:compile
+[INFO] |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.14-TALEND:compile
+[INFO] |  +- org.talend.daikon:service-common:jar:0.31.10:test
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-starter-feign:jar:1.2.5.RELEASE:test
+[INFO] |  |  |  +- org.springframework.cloud:spring-cloud-starter:jar:1.1.7.RELEASE:test
+[INFO] |  |  |  |  +- org.springframework.cloud:spring-cloud-context:jar:1.1.7.RELEASE:test
+[INFO] |  |  |  |  \- org.springframework.security:spring-security-rsa:jar:1.0.3.RELEASE:test
+[INFO] |  |  |  |     \- org.bouncycastle:bcpkix-jdk15on:jar:1.68:test
+[INFO] |  |  |  |        \- org.bouncycastle:bcprov-jdk15on:jar:1.68:test
+[INFO] |  |  |  +- org.springframework.cloud:spring-cloud-netflix-core:jar:1.2.5.RELEASE:test
+[INFO] |  |  |  +- org.springframework.cloud:spring-cloud-commons:jar:1.1.7.RELEASE:test
+[INFO] |  |  |  |  \- org.springframework.security:spring-security-crypto:jar:4.2.1.RELEASE:test
+[INFO] |  |  |  +- io.github.openfeign:feign-core:jar:9.3.1:test
+[INFO] |  |  |  |  \- org.jvnet:animal-sniffer-annotation:jar:1.0:test
+[INFO] |  |  |  +- io.github.openfeign:feign-slf4j:jar:9.3.1:test
+[INFO] |  |  |  +- io.github.openfeign:feign-hystrix:jar:9.3.1:test
+[INFO] |  |  |  +- org.springframework.cloud:spring-cloud-starter-ribbon:jar:1.2.5.RELEASE:test
+[INFO] |  |  |  |  +- org.springframework.retry:spring-retry:jar:1.2.0.RELEASE:test
+[INFO] |  |  |  |  +- com.netflix.ribbon:ribbon:jar:2.2.0:test
+[INFO] |  |  |  |  |  +- com.netflix.ribbon:ribbon-transport:jar:2.2.0:test
+[INFO] |  |  |  |  |  |  +- io.reactivex:rxnetty-contexts:jar:0.4.9:test
+[INFO] |  |  |  |  |  |  \- io.reactivex:rxnetty-servo:jar:0.4.9:test
+[INFO] |  |  |  |  |  \- io.reactivex:rxnetty:jar:0.4.9:test
+[INFO] |  |  |  |  |     +- io.netty:netty-codec-http:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  +- io.netty:netty-common:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  +- io.netty:netty-buffer:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  +- io.netty:netty-transport:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  |  \- io.netty:netty-resolver:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  +- io.netty:netty-codec:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     |  \- io.netty:netty-handler:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |     \- io.netty:netty-transport-native-epoll:jar:4.1.48.Final:test
+[INFO] |  |  |  |  |        \- io.netty:netty-transport-native-unix-common:jar:4.1.48.Final:test
+[INFO] |  |  |  |  +- com.netflix.ribbon:ribbon-core:jar:2.2.0:test
+[INFO] |  |  |  |  +- com.netflix.ribbon:ribbon-httpclient:jar:2.2.0:test
+[INFO] |  |  |  |  |  +- com.sun.jersey:jersey-client:jar:1.9:test
+[INFO] |  |  |  |  |  +- com.sun.jersey.contribs:jersey-apache-client4:jar:1.19.1:test
+[INFO] |  |  |  |  |  +- com.netflix.servo:servo-core:jar:0.10.1:test
+[INFO] |  |  |  |  |  |  \- com.netflix.servo:servo-internal:jar:0.10.1:test
+[INFO] |  |  |  |  |  \- com.netflix.netflix-commons:netflix-commons-util:jar:0.1.1:test
+[INFO] |  |  |  |  +- com.netflix.ribbon:ribbon-loadbalancer:jar:2.2.0:test
+[INFO] |  |  |  |  |  \- com.netflix.netflix-commons:netflix-statistics:jar:0.1.1:test
+[INFO] |  |  |  |  \- io.reactivex:rxjava:jar:1.1.10:test
+[INFO] |  |  |  \- org.springframework.cloud:spring-cloud-starter-archaius:jar:1.2.5.RELEASE:test
+[INFO] |  |  |     +- com.netflix.archaius:archaius-core:jar:0.7.4:test
+[INFO] |  |  |     \- commons-configuration:commons-configuration:jar:1.8:test
+[INFO] |  |  +- org.springframework.cloud:spring-cloud-starter-hystrix:jar:1.2.5.RELEASE:test
+[INFO] |  |  |  +- com.netflix.hystrix:hystrix-core:jar:1.5.6:test
+[INFO] |  |  |  |  \- org.hdrhistogram:HdrHistogram:jar:2.1.9:test
+[INFO] |  |  |  +- com.netflix.hystrix:hystrix-metrics-event-stream:jar:1.5.6:test
+[INFO] |  |  |  |  \- com.netflix.hystrix:hystrix-serialization:jar:1.5.6:test
+[INFO] |  |  |  |     +- com.fasterxml.jackson.module:jackson-module-afterburner:jar:2.11.4:test
+[INFO] |  |  |  |     \- com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:jar:2.11.4:test
+[INFO] |  |  |  \- com.netflix.hystrix:hystrix-javanica:jar:1.5.6:test
+[INFO] |  |  \- org.springframework.boot:spring-boot-starter-aop:jar:1.5.1.RELEASE:test
+[INFO] |  |     \- org.aspectj:aspectjweaver:jar:1.8.9:test
+[INFO] |  \- com.webcohesion.enunciate:enunciate-core-annotations:jar:2.8.0:test
+[INFO] +- org.talend.components:components-api-service-rest:test-jar:tests:0.28.14:test
+[INFO] +- org.talend.components:components-osgitest:jar:0.30.1-SNAPSHOT:test
+[INFO] |  +- org.ops4j.pax.url:pax-url-link:jar:2.6.2:test
+[INFO] |  |  +- org.ops4j.pax.url:pax-url-commons:jar:2.6.2:test
+[INFO] |  |  |  \- org.ops4j.pax.swissbox:pax-swissbox-property:jar:1.8.3:test
+[INFO] |  |  +- org.ops4j.base:ops4j-base-lang:jar:1.5.0:test
+[INFO] |  |  \- org.ops4j.base:ops4j-base-util-property:jar:1.5.0:test
+[INFO] |  +- org.talend.daikon:crypto-utils:jar:bundle:0.31.11:test
+[INFO] |  +- org.ops4j.pax.exam:pax-exam-junit4:jar:4.9.1:test
+[INFO] |  |  \- org.ops4j.pax.exam:pax-exam-spi:jar:4.9.1:test
+[INFO] |  |     \- org.ops4j.pax.tinybundles:tinybundles:jar:2.1.1:test
+[INFO] |  |        \- biz.aQute.bnd:bndlib:jar:2.4.0:test
+[INFO] |  +- org.ops4j.pax.exam:pax-exam-link-mvn:jar:4.9.1:test
+[INFO] |  |  \- org.ops4j.pax.url:pax-url-classpath:jar:2.4.5:test
+[INFO] |  |     \- org.ops4j.pax.swissbox:pax-swissbox-optional-jcl:jar:1.8.2:test
+[INFO] |  +- org.apache.felix:org.apache.felix.framework:jar:5.2.0:test
+[INFO] |  +- org.ops4j.pax.exam:pax-exam-container-forked:jar:4.9.1:test
+[INFO] |  |  +- org.ops4j.pax.exam:pax-exam:jar:4.9.1:test
+[INFO] |  |  |  \- org.ops4j.base:ops4j-base-store:jar:1.5.0:test
+[INFO] |  |  +- org.ops4j.base:ops4j-base-exec:jar:1.5.0:test
+[INFO] |  |  +- org.ops4j.base:ops4j-base-net:jar:1.5.0:test
+[INFO] |  |  |  \- org.ops4j.base:ops4j-base-monitors:jar:1.5.0:test
+[INFO] |  |  +- org.ops4j.base:ops4j-base-io:jar:1.5.0:test
+[INFO] |  |  +- org.ops4j.base:ops4j-base-spi:jar:1.5.0:test
+[INFO] |  |  +- org.ops4j.pax.swissbox:pax-swissbox-framework:jar:1.8.2:test
+[INFO] |  |  \- org.ops4j.pax.swissbox:pax-swissbox-tracker:jar:1.8.2:test
+[INFO] |  |     \- org.ops4j.pax.swissbox:pax-swissbox-lifecycle:jar:1.8.2:test
+[INFO] |  +- org.apache.servicemix.bundles:org.apache.servicemix.bundles.hamcrest:jar:1.3_1:test
+[INFO] |  +- org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016:test
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.8.1:compile
+[INFO] |  \- com.google.guava:failureaccess:jar:1.0.1:compile
+[INFO] +- org.mockito:mockito-core:jar:2.24.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.9.7:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.7:test
+[INFO] |  \- org.objenesis:objenesis:jar:2.6:test
+[INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.0:test
+[INFO] |  \- org.powermock:powermock-api-support:jar:2.0.0:test
+[INFO] |     +- org.powermock:powermock-reflect:jar:2.0.0:test
+[INFO] |     \- org.powermock:powermock-core:jar:2.0.0:test
+[INFO] |        \- org.javassist:javassist:jar:3.24.0-GA:test
+[INFO] +- org.powermock:powermock-module-junit4:jar:2.0.0:test
+[INFO] |  +- org.powermock:powermock-module-junit4-common:jar:2.0.0:test
+[INFO] |  +- junit:junit:jar:4.12:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:1.5.22.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:1.5.22.RELEASE:test
+[INFO] |  |  \- org.springframework.boot:spring-boot:jar:1.5.22.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:1.5.22.RELEASE:test
+[INFO] |  |  \- org.springframework.boot:spring-boot-autoconfigure:jar:1.5.22.RELEASE:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.2.0:test
+[INFO] |  +- org.assertj:assertj-core:jar:2.6.0:test
+[INFO] |  +- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.4.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:4.3.25.RELEASE:test
+[INFO] |  \- org.springframework:spring-test:jar:4.3.25.RELEASE:test
+[INFO] +- org.talend.daikon:daikon:jar:tests:0.31.11:test
+[INFO] |  +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO] |  |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO] |  |  +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] |  |  +- org.apache.commons:commons-compress:jar:1.19:compile
+[INFO] |  |  \- org.tukaani:xz:jar:1.5:compile
+[INFO] |  +- commons-codec:commons-codec:jar:1.14:compile
+[INFO] |  +- com.cedarsoftware:json-io:jar:4.9.9-TALEND:compile
+[INFO] |  \- org.talend.daikon:daikon-exception:jar:0.31.11:compile
+[INFO] +- org.talend.daikon:daikon-spring-utils:jar:0.31.11:test
+[INFO] |  +- org.springframework:spring-beans:jar:4.3.25.RELEASE:test
+[INFO] |  \- org.springframework:spring-context:jar:4.3.25.RELEASE:test
+[INFO] |     +- org.springframework:spring-aop:jar:4.3.25.RELEASE:test
+[INFO] |     \- org.springframework:spring-expression:jar:4.3.25.RELEASE:test
+[INFO] +- org.databene:contiperf:jar:2.3.4:test
+[INFO] \- org.slf4j:slf4j-log4j12:jar:1.7.25:test
+[INFO]    \- log4j:log4j:jar:1.2.17:test
+[INFO] 
+[INFO] ---------< org.talend.components:components-marklogic-runtime >---------
+[INFO] Building Components - MarkLogic Runtime 0.30.1-SNAPSHOT            [2/3]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.10:tree (default-cli) @ components-marklogic-runtime ---
+[INFO] org.talend.components:components-marklogic-runtime:jar:0.30.1-SNAPSHOT
+[INFO] +- org.talend.components:components-marklogic-definition:jar:0.30.1-SNAPSHOT:compile
+[INFO] |  +- com.google.auto.service:auto-service:jar:1.0-rc2:compile
+[INFO] |  |  +- com.google.auto:auto-common:jar:0.3:compile
+[INFO] |  |  \- com.google.guava:guava:jar:30.0-jre:compile
+[INFO] |  |     +- com.google.guava:failureaccess:jar:1.0.1:compile
+[INFO] |  |     +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
+[INFO] |  |     +- org.checkerframework:checker-qual:jar:3.5.0:compile
+[INFO] |  |     +- com.google.errorprone:error_prone_annotations:jar:2.3.4:compile
+[INFO] |  |     \- com.google.j2objc:j2objc-annotations:jar:1.3:compile
+[INFO] |  \- org.talend.components:components-common:jar:0.30.1-SNAPSHOT:compile
+[INFO] |     \- net.sourceforge.javacsv:javacsv:jar:2.0:compile
+[INFO] +- org.talend.components:components-api:jar:0.30.1-SNAPSHOT:compile
+[INFO] |  +- org.talend.daikon:daikon:jar:0.31.11:compile
+[INFO] |  +- org.talend.daikon:crypto-utils:jar:0.31.11:compile
+[INFO] |  |  +- org.apache.commons:commons-configuration2:jar:2.0:compile
+[INFO] |  |  \- org.apache.httpcomponents:httpclient:jar:4.5.12:compile
+[INFO] |  |     \- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
+[INFO] |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  +- joda-time:joda-time:jar:2.8.2:compile
+[INFO] |  +- org.ops4j.pax.url:pax-url-aether:jar:2.6.2:compile
+[INFO] |  |  \- org.ops4j.pax.url:pax-url-aether-support:jar:2.6.2:compile
+[INFO] |  |     \- org.apache.maven.resolver:maven-resolver-impl:jar:1.3.1:compile
+[INFO] |  |        +- org.apache.maven.resolver:maven-resolver-api:jar:1.3.1:compile
+[INFO] |  |        +- org.apache.maven.resolver:maven-resolver-spi:jar:1.3.1:compile
+[INFO] |  |        \- org.apache.maven.resolver:maven-resolver-util:jar:1.3.1:compile
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.25:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.25:compile
+[INFO] +- org.talend.components:components-api:jar:tests:0.30.1-SNAPSHOT:test
+[INFO] +- org.talend.components:components-api-service-common:jar:0.30.1-SNAPSHOT:test
+[INFO] +- com.marklogic:marklogic-client-api:jar:4.0.4:compile
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:3.10.0:compile
+[INFO] |  +- com.squareup.okhttp3:logging-interceptor:jar:3.10.0:compile
+[INFO] |  +- com.burgstaller:okhttp-digest:jar:1.16:compile
+[INFO] |  +- com.sun.mail:javax.mail:jar:1.6.0:compile
+[INFO] |  +- javax.ws.rs:javax.ws.rs-api:jar:2.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.11.4:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.11.4:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.11.4:compile
+[INFO] +- org.dom4j:dom4j:jar:2.1.3:compile
+[INFO] +- org.mockito:mockito-core:jar:2.24.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.9.7:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.7:test
+[INFO] |  \- org.objenesis:objenesis:jar:2.6:test
+[INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.0:test
+[INFO] |  \- org.powermock:powermock-api-support:jar:2.0.0:test
+[INFO] |     +- org.powermock:powermock-reflect:jar:2.0.0:test
+[INFO] |     \- org.powermock:powermock-core:jar:2.0.0:test
+[INFO] |        \- org.javassist:javassist:jar:3.24.0-GA:test
+[INFO] +- org.powermock:powermock-module-junit4:jar:2.0.0:test
+[INFO] |  +- org.powermock:powermock-module-junit4-common:jar:2.0.0:test
+[INFO] |  +- junit:junit:jar:4.12:compile
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- com.marklogic:mlcp:jar:9.0.5:compile
+[INFO] |  +- org.apache.hadoop:hadoop-auth:jar:3.2.1:compile
+[INFO] |  |  +- com.nimbusds:nimbus-jose-jwt:jar:8.11:compile
+[INFO] |  |  |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.3:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] |  |  |     \- org.ow2.asm:asm:jar:5.0.4:compile
+[INFO] |  |  +- org.apache.zookeeper:zookeeper:jar:3.4.14:compile
+[INFO] |  |  +- org.apache.curator:curator-framework:jar:2.13.0:compile
+[INFO] |  |  \- org.apache.kerby:kerb-simplekdc:jar:1.0.1:compile
+[INFO] |  |     +- org.apache.kerby:kerb-client:jar:1.0.1:compile
+[INFO] |  |     |  +- org.apache.kerby:kerby-config:jar:1.0.1:compile
+[INFO] |  |     |  +- org.apache.kerby:kerb-core:jar:1.0.1:compile
+[INFO] |  |     |  |  \- org.apache.kerby:kerby-pkix:jar:1.0.1:compile
+[INFO] |  |     |  |     +- org.apache.kerby:kerby-asn1:jar:1.0.1:compile
+[INFO] |  |     |  |     \- org.apache.kerby:kerby-util:jar:1.0.1:compile
+[INFO] |  |     |  +- org.apache.kerby:kerb-common:jar:1.0.1:compile
+[INFO] |  |     |  |  \- org.apache.kerby:kerb-crypto:jar:1.0.1:compile
+[INFO] |  |     |  +- org.apache.kerby:kerb-util:jar:1.0.1:compile
+[INFO] |  |     |  \- org.apache.kerby:token-provider:jar:1.0.1:compile
+[INFO] |  |     \- org.apache.kerby:kerb-admin:jar:1.0.1:compile
+[INFO] |  |        +- org.apache.kerby:kerb-server:jar:1.0.1:compile
+[INFO] |  |        |  \- org.apache.kerby:kerb-identity:jar:1.0.1:compile
+[INFO] |  |        \- org.apache.kerby:kerby-xdr:jar:1.0.1:compile
+[INFO] |  +- org.apache.hadoop:hadoop-common:jar:3.2.1-talend20191226:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-annotations:jar:3.2.1:compile
+[INFO] |  |  +- commons-cli:commons-cli:jar:1.2:compile
+[INFO] |  |  +- commons-io:commons-io:jar:2.5:compile
+[INFO] |  |  +- commons-collections:commons-collections:jar:3.2.2:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-server:jar:9.4.33.v20201020:compile
+[INFO] |  |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.33.v20201020:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.33.v20201020:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.33.v20201020:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-servlet:jar:9.4.33.v20201020:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-security:jar:9.4.33.v20201020:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.33.v20201020:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-xml:jar:9.4.33.v20201020:compile
+[INFO] |  |  +- javax.servlet.jsp:jsp-api:jar:2.1:runtime
+[INFO] |  |  +- com.sun.jersey:jersey-servlet:jar:1.19:compile
+[INFO] |  |  +- org.apache.commons:commons-text:jar:1.4:compile
+[INFO] |  |  +- com.google.re2j:re2j:jar:1.1:compile
+[INFO] |  |  +- com.google.code.gson:gson:jar:2.8.0:compile
+[INFO] |  |  +- com.jcraft:jsch:jar:0.1.54:compile
+[INFO] |  |  +- org.apache.curator:curator-client:jar:2.13.0:compile
+[INFO] |  |  +- org.apache.curator:curator-recipes:jar:2.13.0:compile
+[INFO] |  |  +- com.google.code.findbugs:jsr305:jar:1.3.9:compile
+[INFO] |  |  +- org.apache.htrace:htrace-core4:jar:4.1.0-incubating:compile
+[INFO] |  |  +- org.codehaus.woodstox:stax2-api:jar:4.1:compile
+[INFO] |  |  +- com.fasterxml.woodstox:woodstox-core:jar:5.0.3:compile
+[INFO] |  |  \- dnsjava:dnsjava:jar:2.1.7:compile
+[INFO] |  +- org.apache.hadoop:hadoop-hdfs:jar:3.2.1-talend20191226:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-util-ajax:jar:9.3.24.v20180605:compile
+[INFO] |  |  +- commons-daemon:commons-daemon:jar:1.0.13:compile
+[INFO] |  |  +- io.netty:netty-all:jar:4.1.48.Final:compile
+[INFO] |  |  \- org.fusesource.leveldbjni:leveldbjni-all:jar:1.8:compile
+[INFO] |  +- org.apache.hadoop:hadoop-mapreduce-client-common:jar:3.2.1:compile
+[INFO] |  |  \- com.google.inject.extensions:guice-servlet:jar:4.0:compile
+[INFO] |  +- org.apache.hadoop:hadoop-mapreduce-client-core:jar:3.2.1:compile
+[INFO] |  |  \- org.apache.hadoop:hadoop-hdfs-client:jar:3.2.1:compile
+[INFO] |  |     \- com.squareup.okhttp:okhttp:jar:2.7.5:compile
+[INFO] |  +- org.apache.hadoop:hadoop-mapreduce-client-jobclient:jar:3.2.1:compile
+[INFO] |  +- org.apache.hadoop:hadoop-yarn-api:jar:3.2.1:compile
+[INFO] |  |  \- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+[INFO] |  |     \- javax.activation:javax.activation-api:jar:1.2.0:compile
+[INFO] |  +- org.apache.hadoop:hadoop-yarn-common:jar:3.2.1:compile
+[INFO] |  |  +- com.google.inject:guice:jar:4.0:compile
+[INFO] |  |  |  \- aopalliance:aopalliance:jar:1.0:compile
+[INFO] |  |  +- com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.11.4:compile
+[INFO] |  |  |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.2:compile
+[INFO] |  |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:jar:2.11.4:compile
+[INFO] |  |     \- com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:jar:2.11.4:compile
+[INFO] |  +- org.apache.hadoop:hadoop-yarn-client:jar:3.2.1:compile
+[INFO] |  +- xpp3:xpp3:jar:1.1.4c:compile
+[INFO] |  +- org.apache.jena:jena-arq:jar:2.10.0:compile
+[INFO] |  +- org.apache.jena:jena-core:jar:2.10.0:compile
+[INFO] |  +- org.apache.jena:jena-iri:jar:0.9.5:compile
+[INFO] |  +- xml-apis:xml-apis:jar:1.4.01:compile
+[INFO] |  +- com.thoughtworks.xstream:xstream:jar:1.4.15:compile
+[INFO] |  |  +- xmlpull:xmlpull:jar:1.1.3.1:compile
+[INFO] |  |  \- xpp3:xpp3_min:jar:1.1.4c:compile
+[INFO] |  +- org.apache.htrace:htrace-core:jar:3.2.0-incubating:compile
+[INFO] |  +- com.marklogic:marklogic-mapreduce2:jar:2.2.5:compile
+[INFO] |  |  +- commons-modeler:commons-modeler:jar:2.0.1:compile
+[INFO] |  |  |  \- commons-logging:commons-logging-api:jar:1.1:compile
+[INFO] |  |  +- info.bliki.wiki:bliki-core:jar:3.1.0:compile
+[INFO] |  |  |  \- org.luaj:luaj-jse:jar:3.0.1:compile
+[INFO] |  |  \- net.sf.saxon:Saxon-HE:jar:9.7.0-7:compile
+[INFO] |  \- com.marklogic:marklogic-xcc:jar:9.0.5:compile
+[INFO] +- org.apache.commons:commons-exec:jar:1.2:compile
+[INFO] +- org.glassfish.jersey.core:jersey-client:jar:2.26:compile
+[INFO] |  \- org.glassfish.hk2.external:javax.inject:jar:2.5.0-b42:compile
+[INFO] +- org.glassfish.jersey.core:jersey-common:jar:2.26:compile
+[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3:compile
+[INFO] |  \- org.glassfish.hk2:osgi-resource-locator:jar:1.0.1:compile
+[INFO] +- org.apache.commons:commons-math3:jar:3.4.1:compile
+[INFO] +- commons-net:commons-net:jar:2.2:compile
+[INFO] +- commons-digester:commons-digester:jar:1.8.1:compile
+[INFO] |  +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+[INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
+[INFO] +- javax.activation:activation:jar:1.1.1:compile
+[INFO] +- commons-configuration:commons-configuration:jar:1.8:compile
+[INFO] |  \- commons-lang:commons-lang:jar:2.6:compile
+[INFO] +- org.apache.commons:commons-csv:jar:1.4:compile
+[INFO] +- jline:jline:jar:2.12:compile
+[INFO] +- io.netty:netty:jar:3.10.6.Final:compile
+[INFO] +- com.squareup.okio:okio:jar:1.14.0:compile
+[INFO] +- xerces:xercesImpl:jar:2.12.0:compile
+[INFO] +- org.apache.commons:commons-compress:jar:1.19:compile
+[INFO] +- net.sf.jopt-simple:jopt-simple:jar:4.9:compile
+[INFO] +- com.google.protobuf:protobuf-java:jar:3.3.0:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:1.5.22.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:1.5.22.RELEASE:test
+[INFO] |  |  \- org.springframework.boot:spring-boot:jar:1.5.22.RELEASE:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:1.5.22.RELEASE:test
+[INFO] |  |  \- org.springframework.boot:spring-boot-autoconfigure:jar:1.5.22.RELEASE:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.2.0:test
+[INFO] |  +- org.assertj:assertj-core:jar:2.6.0:test
+[INFO] |  +- org.hamcrest:hamcrest-library:jar:1.3:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.4.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:4.3.25.RELEASE:test
+[INFO] |  \- org.springframework:spring-test:jar:4.3.25.RELEASE:test
+[INFO] +- org.talend.daikon:daikon:jar:tests:0.31.11:test
+[INFO] |  +- org.apache.avro:avro:jar:1.8.1:compile
+[INFO] |  |  +- com.thoughtworks.paranamer:paranamer:jar:2.7:compile
+[INFO] |  |  +- org.xerial.snappy:snappy-java:jar:1.1.1.3:compile
+[INFO] |  |  \- org.tukaani:xz:jar:1.5:compile
+[INFO] |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.14-TALEND:compile
+[INFO] |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.14-TALEND:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.8.1:compile
+[INFO] |  +- javax.servlet:javax.servlet-api:jar:3.1.0:compile
+[INFO] |  +- commons-codec:commons-codec:jar:1.14:compile
+[INFO] |  +- com.cedarsoftware:json-io:jar:4.9.9-TALEND:compile
+[INFO] |  \- org.talend.daikon:daikon-exception:jar:0.31.11:compile
+[INFO] +- org.talend.daikon:daikon-spring-utils:jar:0.31.11:test
+[INFO] |  +- org.springframework:spring-beans:jar:4.3.25.RELEASE:test
+[INFO] |  \- org.springframework:spring-context:jar:4.3.25.RELEASE:test
+[INFO] |     +- org.springframework:spring-aop:jar:4.3.25.RELEASE:test
+[INFO] |     \- org.springframework:spring-expression:jar:4.3.25.RELEASE:test
+[INFO] +- org.databene:contiperf:jar:2.3.4:test
+[INFO] \- org.slf4j:slf4j-log4j12:jar:1.7.25:test
+[INFO]    \- log4j:log4j:jar:1.2.17:compile
+[INFO] 
+[INFO] -------< org.talend.components:components-marklogic-aggregator >--------
+[INFO] Building Components - MarkLogic Aggregator 0.30.1-SNAPSHOT         [3/3]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ components-marklogic-aggregator ---
+[INFO] org.talend.components:components-marklogic-aggregator:pom:0.30.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Components - MarkLogic Aggregator 0.30.1-SNAPSHOT:
+[INFO] 
+[INFO] Components - MarkLogic Definition .................. SUCCESS [  5.226 s]
+[INFO] Components - MarkLogic Runtime ..................... SUCCESS [  0.631 s]
+[INFO] Components - MarkLogic Aggregator .................. SUCCESS [  0.371 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.361 s
+[INFO] Finished at: 2021-03-09T10:11:36+08:00
+[INFO] ------------------------------------------------------------------------

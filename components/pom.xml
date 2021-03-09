@@ -28,15 +28,5 @@
         <module>components-netsuite</module>
         <module>components-salesforce</module>
         <module>components-snowflake</module>
-        <!-- Disabled components. They are not used in any product -->
-<!--        <module>components-bigquery</module>-->
-<!--        <module>components-elasticsearch</module>-->
-<!--        <module>components-filedelimited</module>-->
-<!--        <module>components-filterrow</module>-->
-<!--        <module>components-kafka</module>-->
-<!--        <module>components-kinesis</module>-->
-<!--        <module>components-localio</module>-->
-<!--        <module>components-processing</module>-->
-<!--        <module>components-pubsub</module>-->
     </modules>
 </project>
