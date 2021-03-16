@@ -35,6 +35,8 @@ Consider the following requirements for your system:
 
 ## Installation
 
+**NOTE**: If the patch is deployed in the approach **Installing the patch using Talend Studio**, the folder **configuration** under this patch must be replaced manually.
+
 ### Installing the patch using Software update
 
 1) Logon TAC and switch to Configuration->Software Update, then enter the correct values and save referring to the documentation: https://help.talend.com/reader/f7Em9WV_cPm2RRywucSN0Q/j9x5iXV~vyxMlUafnDejaQ
