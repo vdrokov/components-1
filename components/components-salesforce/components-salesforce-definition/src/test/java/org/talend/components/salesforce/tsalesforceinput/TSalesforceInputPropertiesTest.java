@@ -114,6 +114,8 @@ public class TSalesforceInputPropertiesTest extends SalesforceTestBase {
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.safetySwitch).isHidden());
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.jobTimeOut.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.pkChunking.getName()).isHidden());
+        Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.specifyParent.getName()).isHidden());
+        Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.parentObject.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.chunkSize.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getChildForm(properties.connection.getName())
                 .getWidget(properties.connection.bulkConnection.getName()).isHidden());
@@ -138,9 +140,15 @@ public class TSalesforceInputPropertiesTest extends SalesforceTestBase {
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.maxRecords.getName()).isHidden());
         Assert.assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.jobTimeOut.getName()).isHidden());
         Assert.assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.pkChunking.getName()).isHidden());
+        Assert.assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.specifyParent.getName()).isHidden());
+        Assert.assertTrue(properties.getForm(Form.ADVANCED).getWidget(properties.parentObject.getName()).isHidden());
         Assert.assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.chunkSize.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.ADVANCED).getChildForm(properties.connection.getName())
                 .getWidget(properties.connection.bulkConnection.getName()).isHidden());
+
+        properties.specifyParent.setValue(true);
+        properties.refreshLayout(properties.getForm(Form.ADVANCED));
+        Assert.assertFalse(properties.getForm(Form.ADVANCED).getWidget(properties.parentObject.getName()).isHidden());
 
         properties.queryMode.setValue(QueryMode.BulkV2);
         properties.manualQuery.setValue(false);

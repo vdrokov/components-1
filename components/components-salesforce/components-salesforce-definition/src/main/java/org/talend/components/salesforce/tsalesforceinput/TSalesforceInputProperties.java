@@ -94,6 +94,10 @@ public class TSalesforceInputProperties extends SalesforceConnectionModuleProper
 
     public Property<Integer> chunkSize = newInteger("chunkSize", DEFAULT_CHUNK_SIZE);
 
+    public Property<Boolean> specifyParent = newBoolean("specifyParent", false);
+
+    public Property<String> parentObject = newProperty("parentObject");
+
     public Property<Integer> chunkSleepTime = newInteger("chunkSleepTime", DEFAULT_CHUNK_SLEEP_TIME);
 
     public Property<Boolean> useResultLocator = newBoolean("useResultLocator", false);
@@ -164,6 +168,8 @@ public class TSalesforceInputProperties extends SalesforceConnectionModuleProper
         advancedForm.addRow(jobTimeOut);
         advancedForm.addRow(pkChunking);
         advancedForm.addRow(chunkSize);
+        advancedForm.addRow(specifyParent);
+        advancedForm.addRow(parentObject);
         advancedForm.addRow(chunkSleepTime);
         advancedForm.addRow(batchSize);
         advancedForm.addRow(normalizeDelimiter);
@@ -250,6 +256,10 @@ public class TSalesforceInputProperties extends SalesforceConnectionModuleProper
         refreshLayout(getForm(Form.ADVANCED));
     }
 
+    public void afterSpecifyParent() {
+        refreshLayout(getForm(Form.ADVANCED));
+    }
+
     public void afterPkChunkingSleepTime() {
         refreshLayout(getForm(Form.ADVANCED));
     }
@@ -279,6 +289,8 @@ public class TSalesforceInputProperties extends SalesforceConnectionModuleProper
             form.getWidget(jobTimeOut.getName()).setVisible(isBulkQueryV1 || isBulkQueryV2);
             form.getWidget(pkChunking.getName()).setVisible(isBulkQueryV1);
             form.getWidget(chunkSize.getName()).setVisible(isBulkQueryV1 && pkChunking.getValue());
+            form.getWidget(specifyParent.getName()).setVisible(isBulkQueryV1 && pkChunking.getValue());
+            form.getWidget(parentObject.getName()).setVisible(isBulkQueryV1 && pkChunking.getValue() && specifyParent.getValue());
             form.getWidget(chunkSleepTime.getName()).setVisible(isBulkQueryV1 && pkChunking.getValue());
             form.getWidget(normalizeDelimiter.getName()).setHidden(isBulkQueryV1 || isBulkQueryV2);
             form.getWidget(columnNameDelimiter.getName()).setHidden(isBulkQueryV1 || isBulkQueryV2);

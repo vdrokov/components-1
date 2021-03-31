@@ -109,6 +109,8 @@ public class SalesforceBulkRuntime {
 
     private int chunkSize;
 
+    private String parentObject;
+
     private int chunkSleepTime;
 
     private long jobTimeOut;
@@ -116,6 +118,8 @@ public class SalesforceBulkRuntime {
     private static final String PK_CHUNKING_HEADER_NAME = "Sforce-Enable-PKChunking";
 
     private static final String CHUNK_SIZE_PROPERTY_NAME = "chunkSize=";
+
+    private static final String PARENT_OBJECT_PROPERTY_NAME = "parent=";
 
     private static final int MAX_BATCH_EXECUTION_TIME = 600 * 1000;
 
@@ -143,6 +147,8 @@ public class SalesforceBulkRuntime {
                 : properties.chunkSize.getValue();
         this.chunkSleepTime = properties.chunkSleepTime.getValue() > 0 ? properties.chunkSleepTime.getValue() * 1000
                 : TSalesforceInputProperties.DEFAULT_CHUNK_SLEEP_TIME * 1000;
+
+        this.parentObject = properties.specifyParent.getValue() ? properties.parentObject.getValue() : "";
     }
 
     public int getChunkSize() {
@@ -597,9 +603,19 @@ public class SalesforceBulkRuntime {
 
     protected JobInfo createJob(JobInfo job) throws AsyncApiException, ConnectionException {
         try {
+            String pkChunkingHeaderValue = "";
             if (0 != chunkSize) {
+                pkChunkingHeaderValue = CHUNK_SIZE_PROPERTY_NAME + chunkSize;
+            }
+            if (parentObject != null && !parentObject.isEmpty()) {
+                if (!pkChunkingHeaderValue.isEmpty()) {
+                    pkChunkingHeaderValue += ";";
+                }
+                pkChunkingHeaderValue += PARENT_OBJECT_PROPERTY_NAME + parentObject;
+            }
+            if (!pkChunkingHeaderValue.isEmpty()) {
                 // Enabling PK chunking by setting header and chunk size.
-                bulkConnection.addHeader(PK_CHUNKING_HEADER_NAME, CHUNK_SIZE_PROPERTY_NAME + chunkSize);
+                bulkConnection.addHeader(PK_CHUNKING_HEADER_NAME, pkChunkingHeaderValue);
             }
             return bulkConnection.createJob(job);
         } catch (AsyncApiException sfException) {

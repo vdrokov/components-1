@@ -728,6 +728,42 @@ public class SalesforceInputReaderTestIT extends SalesforceTestBase {
         }
     }
 
+    /**
+     * Should catch exception with error message "Entity 'CaseHistory' is not supported to use PKChunking"
+     */
+    @Test(expected = IOException.class)
+    public void testPKChunkingParentObjectError() throws Throwable {
+        testPKChunkingParentObject(false);
+    }
+
+    /**
+     * Test specify the parent object when query on sharing objects.
+     */
+    @Test()
+    public void testPKChunkingParentObjectOK() throws Throwable {
+        testPKChunkingParentObject(true);
+    }
+
+    /**
+     * Test aggregate query field not case sensitive
+     */
+    public void testPKChunkingParentObject(boolean specifyParent) throws Throwable {
+        Schema caseHistorySchema = SchemaBuilder.builder().record("Schema").fields() //
+                .name("Id").type().stringType().noDefault() //
+                .name("CaseId").type().stringType().noDefault() //
+                .name("Field").type().stringType().noDefault() //
+                .endRecord();
+        TSalesforceInputProperties props = createTSalesforceInputProperties(true, true);
+        props.manualQuery.setValue(true);
+        props.query.setValue("SELECT Id,CaseId,Field from CaseHistory");
+        props.module.main.schema.setValue(caseHistorySchema);
+        props.pkChunking.setValue(true);
+        props.chunkSize.setValue(1000);
+        props.specifyParent.setValue(specifyParent);
+        props.parentObject.setValue("Case");
+        readRows(props);
+    }
+
     protected void testBulkQueryNullValue(SalesforceConnectionModuleProperties props, String random,boolean returnNullForEmpty) throws Throwable {
         ComponentDefinition sfInputDef = new TSalesforceInputDefinition();
         TSalesforceInputProperties sfInputProps = (TSalesforceInputProperties) sfInputDef.createRuntimeProperties();
