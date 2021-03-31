@@ -13,6 +13,11 @@ def dockerCredentials = usernamePassword(
     passwordVariable: 'DOCKER_PASSWORD',
     usernameVariable: 'DOCKER_LOGIN')
 
+def artifactoryCredentials = usernamePassword(
+    credentialsId: 'artifactory-datapwn-credentials',
+    passwordVariable: 'ARTIFACTORY_PASSWORD',
+    usernameVariable: 'ARTIFACTORY_LOGIN')
+
 def branch = env.BRANCH_NAME
 def repo = 'components'
 def slackChannel = 'components-ci'
@@ -54,6 +59,10 @@ spec:
         }
     }
 
+  environment {
+    ARTIFACTORY_REGISTRY = "artifactory.datapwn.com"
+  }
+
   options {
     timeout(time: 120, unit: 'MINUTES')
     skipStagesAfterUnstable()
@@ -62,36 +71,19 @@ spec:
   }
 
   stages {
-
-    stage('Compile') {
+    stage('Build') {
       steps {
-          container('main') {
-             sh 'mvn clean compile'
-          }
+        container('main') {
+           withCredentials([artifactoryCredentials]) {
+             sh '''#!/bin/bash
+             docker version
+             echo $ARTIFACTORY_PASSWORD | docker login $ARTIFACTORY_REGISTRY -u $ARTIFACTORY_LOGIN --password-stdin
+             mvn clean install
+             '''
+           }
+        }
       }
     }
-
-    stage('Test') {
-      steps {
-          container('main') {
-             sh 'mvn test'
-          }
-      }
-    }
-
-    //stage('Deploy') {
-     // steps {
-    //    sh """
-     //       mvn -B -U -V 
-     //      """
-              // deploy
-              // -Dgit_branch="${escaped_branch}" \
-              // -Dbigquery.project="${bigquery_project}" \
-              // -Dbigquery.service.account.file="${service_account_file}" \
-              // -Dbigquery.gcp.temp.folder="${bigquery_gcp_temp_folder}" \
-              // -Dorg.talend.components.google.drive.service_account_file="${google_drive_service_account_file}" 
-   //   }
-   // }
   }
 
   post {
