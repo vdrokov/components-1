@@ -13,6 +13,14 @@
 
 package org.talend.components.marklogic.runtime.bulkload;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.components.marklogic.exceptions.MarkLogicErrorCode;
@@ -22,12 +30,12 @@ import org.talend.components.marklogic.util.CommandExecutor;
 import org.talend.daikon.i18n.GlobalI18N;
 import org.talend.daikon.i18n.I18nMessages;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-
+/**
+ * External mlcp loader to preserve previous behavior and do not lead to regressions.
+ * Using MarkLogic Content Pump binaries could be obtain from the MarkLogic official site: https://developer.marklogic.com/products/mlcp/
+ * By default tMarkLogicBulkLoad doesn't use it, but the mlcp.jar instead
+ * @see MarkLogicInternalBulkLoadRunner
+ */
 public class MarkLogicExternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRunner {
 
     private static final I18nMessages MESSAGES = GlobalI18N.getI18nMessageProvider()
@@ -35,9 +43,9 @@ public class MarkLogicExternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRu
 
     private transient static final Logger LOGGER = LoggerFactory.getLogger(MarkLogicBulkLoad.class);
 
-    private static final String CMD_CALL = "cmd /c mlcp.bat ";
+    private static final String CMD_CALL = "mlcp.bat";
 
-    private static final String SH_CALL = "mlcp.sh ";
+    private static final String SH_CALL = "mlcp.sh";
 
     protected MarkLogicExternalBulkLoadRunner(MarkLogicBulkLoadProperties bulkLoadProperties) {
         super(bulkLoadProperties);
@@ -45,17 +53,16 @@ public class MarkLogicExternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRu
 
     @Override
     public void performBulkLoad() {
-        String[] mlcpCommandArray = prepareMLCPCommand();
-        String mlcpCMDCommand = prepareMLCPCommandCMD(mlcpCommandArray);
-        runBulkLoading(mlcpCMDCommand);
+        List<String> mlcpCMDCommandParameters = prepareMLCPCommand();
+        List<String> mlcpFinalCommand = prepareMLCPCommandCMD(mlcpCMDCommandParameters);
+        runBulkLoading(mlcpFinalCommand);
     }
 
-    String prepareMLCPCommandCMD(String[] mlcpCommandArray) {
-        StringBuilder mlcpCMDCommand = new StringBuilder(prepareMlcpCommandStart(System.getProperty("os.name")));
-        for (String commandElement : mlcpCommandArray) {
-            mlcpCMDCommand.append(" ").append(commandElement);
-        }
-        return mlcpCMDCommand.toString();
+    List<String> prepareMLCPCommandCMD(List<String> mlcpCommandParameters) {
+        List<String> fullMLCPCommand = new ArrayList<>();
+        fullMLCPCommand.add(prepareMlcpCommandStart(System.getProperty("os.name")));
+        fullMLCPCommand.addAll(mlcpCommandParameters);
+        return fullMLCPCommand;
     }
 
     String prepareMlcpCommandStart(String osName) {
@@ -67,12 +74,11 @@ public class MarkLogicExternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRu
     }
 
     @Override
-    protected void runBulkLoading(String... parameters) {
-        String mlcpCommand = parameters[0];
-        LOGGER.debug(MESSAGES.getMessage("messages.debug.command", mlcpCommand));
+    protected void runBulkLoading(List<String> parameters) {
+        LOGGER.debug(MESSAGES.getMessage("messages.debug.command", parameters));
         LOGGER.info(MESSAGES.getMessage("messages.info.startBulkLoad"));
         try {
-            Process mlcpProcess = CommandExecutor.executeCommand(mlcpCommand);
+            Process mlcpProcess = CommandExecutor.executeCommand(parameters);
 
             try (InputStream normalInput = mlcpProcess.getInputStream();
                     InputStream errorInput = mlcpProcess.getErrorStream()) {

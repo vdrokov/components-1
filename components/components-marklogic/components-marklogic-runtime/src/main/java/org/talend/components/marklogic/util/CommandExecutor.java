@@ -14,6 +14,7 @@
 package org.talend.components.marklogic.util;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Util class used for mock system package.
@@ -27,8 +28,15 @@ public class CommandExecutor {
      * @return Process which was executed
      * @throws IOException when execution exception occurs
      */
-    public static Process executeCommand(String command) throws IOException {
-        return Runtime.getRuntime().exec(command);
-    }
+    public static Process executeCommand(List<String> commandList) throws IOException {
+        ProcessBuilder pb;
+        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+            pb = new ProcessBuilder("cmd", "/c");
+        } else {
+            pb = new ProcessBuilder("sh");
+        }
 
+        pb.command(commandList);
+        return pb.start();
+    }
 }

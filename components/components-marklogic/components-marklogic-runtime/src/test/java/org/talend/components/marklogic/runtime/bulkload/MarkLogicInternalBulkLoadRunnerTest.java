@@ -64,7 +64,7 @@ public class MarkLogicInternalBulkLoadRunnerTest {
         initConnectionParameters();
         bulkLoadRuntime.initialize(null, bulkLoadProperties);
         bulkLoadRunner = new MarkLogicInternalBulkLoadRunner(bulkLoadProperties);
-        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand();
+        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand().toArray(new String[0]);
 
         assertThat(mlcpCommandArray, hasItemInArray("-host"));
         assertThat(mlcpCommandArray, hasItemInArray(bulkLoadProperties.connection.host.getStringValue()));
@@ -91,7 +91,7 @@ public class MarkLogicInternalBulkLoadRunnerTest {
 
         bulkLoadRuntime.initialize(null, bulkLoadProperties);
         bulkLoadRunner = new MarkLogicInternalBulkLoadRunner(bulkLoadProperties);
-        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand();
+        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand().toArray(new String[0]);
 
         assertThat(mlcpCommandArray, hasItemInArray("-host"));
         assertThat(mlcpCommandArray, hasItemInArray(bulkLoadProperties.connection.host.getStringValue()));
@@ -128,7 +128,7 @@ public class MarkLogicInternalBulkLoadRunnerTest {
 
         bulkLoadRuntime.initialize(null, bulkLoadProperties);
         bulkLoadRunner = new MarkLogicInternalBulkLoadRunner(bulkLoadProperties);
-        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand();
+        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand().toArray(new String[0]);
 
         assertThat(mlcpCommandArray, hasItemInArray("-input_file_path"));
         assertThat(mlcpCommandArray, hasItemInArray("a b"));
@@ -143,7 +143,7 @@ public class MarkLogicInternalBulkLoadRunnerTest {
 
         bulkLoadRuntime.initialize(null, bulkLoadProperties);
         bulkLoadRunner = new MarkLogicInternalBulkLoadRunner(bulkLoadProperties);
-        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand();
+        String[] mlcpCommandArray = bulkLoadRunner.prepareMLCPCommand().toArray(new String[0]);
 
         assertThat(mlcpCommandArray, hasItemInArray("-host"));
         assertThat(mlcpCommandArray,

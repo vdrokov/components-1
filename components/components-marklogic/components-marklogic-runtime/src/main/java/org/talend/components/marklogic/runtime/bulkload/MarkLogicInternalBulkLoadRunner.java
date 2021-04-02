@@ -13,7 +13,9 @@
 
 package org.talend.components.marklogic.runtime.bulkload;
 
-import com.marklogic.contentpump.ContentPump;
+import java.io.IOException;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.components.marklogic.exceptions.MarkLogicErrorCode;
@@ -22,7 +24,7 @@ import org.talend.components.marklogic.tmarklogicbulkload.MarkLogicBulkLoadPrope
 import org.talend.daikon.i18n.GlobalI18N;
 import org.talend.daikon.i18n.I18nMessages;
 
-import java.io.IOException;
+import com.marklogic.contentpump.ContentPump;
 
 public class MarkLogicInternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRunner {
 
@@ -35,11 +37,11 @@ public class MarkLogicInternalBulkLoadRunner extends AbstractMarkLogicBulkLoadRu
     }
 
     @Override
-    protected void runBulkLoading(String... parameters) {
+    protected void runBulkLoading(List<String> parameters) {
         LOGGER.debug(MESSAGES.getMessage("messages.debug.command", parameters));
         LOGGER.info(MESSAGES.getMessage("messages.info.startBulkLoad"));
         try {
-            ContentPump.runCommand(parameters);
+            ContentPump.runCommand(parameters.toArray(new String[0]));
         } catch (IOException e) {
             String errorMessage = MESSAGES.getMessage("messages.error.exception");
             LOGGER.error(errorMessage, e.getMessage());

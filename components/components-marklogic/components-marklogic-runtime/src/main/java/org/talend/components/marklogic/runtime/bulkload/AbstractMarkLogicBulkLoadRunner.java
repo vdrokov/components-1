@@ -46,7 +46,7 @@ public abstract class AbstractMarkLogicBulkLoadRunner {
      *
      * @return array of String arguments for MLCP
      */
-    protected String[] prepareMLCPCommand() {
+    protected List<String> prepareMLCPCommand() {
         List<String> mlcpCommand = new ArrayList<>();
 
         String database = connectionProperties.database.getStringValue();
@@ -97,7 +97,7 @@ public abstract class AbstractMarkLogicBulkLoadRunner {
             mlcpCommand.addAll(Arrays.asList(commandLineAdditionalParams.getArguments()));
         }
 
-        return mlcpCommand.toArray(new String[0]);
+        return mlcpCommand;
     }
 
     /**
@@ -105,5 +105,5 @@ public abstract class AbstractMarkLogicBulkLoadRunner {
      *
      * @param parameters concatenated String (as commandline command) or String args for main method of mlcp
      */
-    protected abstract void runBulkLoading(String... parameters);
+    protected abstract void runBulkLoading(List<String> parameters);
 }
