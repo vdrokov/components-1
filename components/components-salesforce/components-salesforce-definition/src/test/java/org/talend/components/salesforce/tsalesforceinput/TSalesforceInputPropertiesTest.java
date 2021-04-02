@@ -123,7 +123,7 @@ public class TSalesforceInputPropertiesTest extends SalesforceTestBase {
         properties.queryMode.setValue(QueryMode.Bulk);
         properties.manualQuery.setValue(false);
         properties.refreshLayout(properties.getForm(Form.MAIN));
-        Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.includeDeleted.getName()).isHidden());
+        Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.includeDeleted.getName()).isVisible());
         Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.query.getName()).isHidden());
         Assert.assertFalse(properties.getForm(Form.MAIN).getWidget(properties.condition.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.guessSchema.getName()).isHidden());
@@ -153,7 +153,7 @@ public class TSalesforceInputPropertiesTest extends SalesforceTestBase {
         properties.queryMode.setValue(QueryMode.BulkV2);
         properties.manualQuery.setValue(false);
         properties.refreshLayout(properties.getForm(Form.MAIN));
-        Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.includeDeleted.getName()).isHidden());
+        Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.includeDeleted.getName()).isVisible());
         Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.query.getName()).isHidden());
         Assert.assertFalse(properties.getForm(Form.MAIN).getWidget(properties.condition.getName()).isHidden());
         Assert.assertTrue(properties.getForm(Form.MAIN).getWidget(properties.guessSchema.getName()).isHidden());

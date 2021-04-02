@@ -318,6 +318,34 @@ public class SalesforceInputReaderTestIT extends SalesforceTestBase {
 
     }
 
+    @Test
+    public void testQueryDeleted() throws Throwable {
+        // 1. prepare account records
+        String name = "Name_IT_" + createNewRandom();
+        List<IndexedRecord> outputRows = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            GenericData.Record row = new GenericData.Record(getSchema(false));
+            row.put("Name", name);
+            row.put("ShippingStreet", "123 Main Street");
+            row.put("ShippingPostalCode", Integer.toString(i));
+            row.put("BillingStreet", "123 Main Street");
+            row.put("BillingState", "CA");
+            row.put("BillingPostalCode", createNewRandom());
+            outputRows.add(row);
+        }
+        writeRows(outputRows);
+        // 2.check accounts
+        String soql = "SELECT Id, Name FROM Account WHERE Name = '" + name + "'";
+        TSalesforceInputProperties properties =createTSalesforceInputProperties(false,true);
+        List<IndexedRecord> records = checkRows(properties,soql,10,true,false);
+        // 3. delete accounts
+        deleteRows(records, properties);
+        // 4. check include delete checkbox
+        checkRows(properties,soql,0,true,false);
+        checkRows(properties,soql,10,true,true);
+
+    }
+
     /**
      * This for basic connection manual query with dynamic
      */
@@ -792,11 +820,12 @@ public class SalesforceInputReaderTestIT extends SalesforceTestBase {
     }
 
     protected List<IndexedRecord> checkRows(SalesforceConnectionModuleProperties props, String soql, int nbLine,
-            boolean bulkQuery) throws IOException {
+            boolean bulkQuery,boolean includeDeleted) throws IOException {
         TSalesforceInputProperties inputProps = (TSalesforceInputProperties) new TSalesforceInputProperties("bar").init();
         inputProps.connection = props.connection;
         inputProps.module = props.module;
         inputProps.batchSize.setValue(200);
+        inputProps.includeDeleted.setValue(includeDeleted);
         if (bulkQuery) {
             inputProps.queryMode.setValue(TSalesforceInputProperties.QueryMode.Bulk);
         } else {
@@ -818,5 +847,9 @@ public class SalesforceInputReaderTestIT extends SalesforceTestBase {
         assertNotNull(totalCount);
         assertThat((int) totalCount, is(nbLine));
         return inputRows;
+    }
+    protected List<IndexedRecord> checkRows(SalesforceConnectionModuleProperties props, String soql, int nbLine,
+                                            boolean bulkQuery) throws IOException {
+        return checkRows(props,soql,nbLine,bulkQuery,false);
     }
 }

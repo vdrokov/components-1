@@ -75,7 +75,6 @@ public class SalesforceBulkQueryV2Runtime {
         if (sprops == null) {
             throw new RuntimeException(MESSAGES.getMessage("error.prop.config"));
         }
-        // TODO need to check together with bulk v1 query
         setIncludeDeleted(sprops.includeDeleted.getValue());
         this.useResultLocator = sprops.useResultLocator.getValue();
         this.maxRecords =  sprops.maxRecords.getValue();

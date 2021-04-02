@@ -118,8 +118,9 @@ public class SalesforceBulkQueryInputReader extends SalesforceReader<IndexedReco
 
     protected void executeSalesforceBulkQuery() throws IOException, ConnectionException {
         String queryText = getQueryString(properties);
+        boolean includeDeleted = ((TSalesforceInputProperties) properties).includeDeleted.getValue();
         try {
-            bulkRuntime.doBulkQuery(getModuleName(), queryText);
+            bulkRuntime.doBulkQuery(getModuleName(), queryText, includeDeleted);
         } catch (AsyncApiException | InterruptedException | ConnectionException e) {
             throw new IOException(e);
         } catch (TalendRuntimeException e) {

@@ -534,15 +534,20 @@ public class SalesforceBulkRuntime {
      *
      * @param moduleName - input module name.
      * @param queryStatement - to be executed.
+     * @param includeDeleted - whether include deleted records.
      * @throws AsyncApiException
      * @throws InterruptedException
      * @throws ConnectionException
      */
-    public void doBulkQuery(String moduleName, String queryStatement)
+    public void doBulkQuery(String moduleName, String queryStatement, boolean includeDeleted)
             throws AsyncApiException, InterruptedException, ConnectionException {
         job = new JobInfo();
         job.setObject(moduleName);
-        job.setOperation(OperationEnum.query);
+        if(includeDeleted){
+            job.setOperation(OperationEnum.queryAll);
+        }else {
+            job.setOperation(OperationEnum.query);
+        }
         if (concurrencyMode != null) {
             job.setConcurrencyMode(concurrencyMode);
         }

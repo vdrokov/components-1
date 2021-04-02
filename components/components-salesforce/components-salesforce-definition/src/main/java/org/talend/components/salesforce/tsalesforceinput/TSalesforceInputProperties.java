@@ -272,9 +272,6 @@ public class TSalesforceInputProperties extends SalesforceConnectionModuleProper
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
         if (form.getName().equals(Form.MAIN)) {
-            form
-                    .getWidget(includeDeleted.getName())
-                    .setHidden(!((queryMode.getValue() != null) && queryMode.getValue().equals(QueryMode.Query)));
 
             form.getWidget(query.getName()).setHidden(!manualQuery.getValue());
             form.getWidget(condition.getName()).setHidden(manualQuery.getValue());

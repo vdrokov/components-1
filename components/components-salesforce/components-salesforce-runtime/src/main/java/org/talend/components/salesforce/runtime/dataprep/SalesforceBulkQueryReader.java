@@ -129,7 +129,7 @@ public final class SalesforceBulkQueryReader extends AbstractBoundedReader<Index
         String queryText = getQueryString();
         LOG.debug("Execute SOQL:" + queryText);
         try {
-            bulkRuntime.doBulkQuery(getModuleName(), queryText);
+            bulkRuntime.doBulkQuery(getModuleName(), queryText, false);
         } catch (AsyncApiException | InterruptedException | ConnectionException e) {
             throw new IOException(e);
         }
