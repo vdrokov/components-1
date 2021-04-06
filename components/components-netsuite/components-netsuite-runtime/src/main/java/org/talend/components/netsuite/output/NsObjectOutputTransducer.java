@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
+import org.apache.commons.lang3.StringUtils;
 import org.talend.components.netsuite.NetSuiteDatasetRuntimeImpl;
 import org.talend.components.netsuite.NsObjectTransducer;
 import org.talend.components.netsuite.client.NetSuiteClientService;
@@ -60,7 +61,7 @@ public class NsObjectOutputTransducer extends NsObjectTransducer {
 
     /** Information about target record type. */
     private RecordTypeInfo recordTypeInfo;
-    
+
     /** Information for picklist type*/
     private String apiVersion;
 
@@ -159,8 +160,8 @@ public class NsObjectOutputTransducer extends NsObjectTransducer {
                 FieldDesc recTypeFieldDesc = typeDesc.getField("type");
                 RecordTypeDesc recordTypeDesc = recordTypeInfo.getRecordType();
                 nullFieldNames.remove("type");
-                writeSimpleField(nsObject, recTypeFieldDesc.asSimple(),
-                        false, nullFieldNames, recordTypeDesc.getType());
+                writeSimpleField(nsObject, recTypeFieldDesc.asSimple(), false, nullFieldNames,
+                        StringUtils.uncapitalize(recordTypeDesc.getTypeName()));
 
             } else if (recordTypeInfo.getRefType() == RefType.CUSTOM_RECORD_REF) {
                 CustomRecordTypeInfo customRecordTypeInfo = (CustomRecordTypeInfo) recordTypeInfo;
@@ -203,14 +204,15 @@ public class NsObjectOutputTransducer extends NsObjectTransducer {
         return nsObject;
     }
 
-    
+
+    @Override
     public String getApiVersion() {
         return apiVersion;
     }
 
-    
+
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
     }
-    
+
 }

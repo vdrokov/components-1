@@ -18,11 +18,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.avro.Schema;
@@ -30,6 +33,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.IndexedRecord;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.talend.components.api.component.runtime.Result;
@@ -74,12 +78,15 @@ import com.netsuite.webservices.v2019_2.platform.core.BooleanCustomFieldRef;
 import com.netsuite.webservices.v2019_2.platform.core.CustomFieldList;
 import com.netsuite.webservices.v2019_2.platform.core.CustomFieldRef;
 import com.netsuite.webservices.v2019_2.platform.core.CustomRecordRef;
+import com.netsuite.webservices.v2019_2.platform.core.MultiSelectCustomFieldRef;
 import com.netsuite.webservices.v2019_2.platform.core.RecordRef;
 import com.netsuite.webservices.v2019_2.platform.core.RecordRefList;
 import com.netsuite.webservices.v2019_2.platform.core.StringCustomFieldRef;
 import com.netsuite.webservices.v2019_2.platform.core.types.RecordType;
+import com.netsuite.webservices.v2019_2.platform.faults.types.StatusDetailCodeType;
 import com.netsuite.webservices.v2019_2.platform.messages.GetListRequest;
 import com.netsuite.webservices.v2019_2.setup.customization.CustomRecord;
+import com.netsuite.webservices.v2019_2.transactions.general.JournalEntry;
 
 /**
  *
@@ -168,13 +175,13 @@ public class NetSuiteOutputWriterIT extends AbstractNetSuiteTestBase {
 
 
         List<NsReadResponse<Account>> readResponseList = clientService.execute(
-        new NetSuiteClientService.PortOperation<List<NsReadResponse<Account>>, NetSuitePortType>() {
-            @Override public List<NsReadResponse<Account>> execute(NetSuitePortType port) throws Exception {
-                GetListRequest request = new GetListRequest();
-                request.getBaseRef().addAll(refList);
-                return NetSuiteClientServiceImpl.toNsReadResponseList(port.getList(request).getReadResponseList());
-            }
-        });
+                new NetSuiteClientService.PortOperation<List<NsReadResponse<Account>>, NetSuitePortType>() {
+                    @Override public List<NsReadResponse<Account>> execute(NetSuitePortType port) throws Exception {
+                        GetListRequest request = new GetListRequest();
+                        request.getBaseRef().addAll(refList);
+                        return NetSuiteClientServiceImpl.toNsReadResponseList(port.getList(request).getReadResponseList());
+                    }
+                });
         TypeDesc typeDesc = clientService.getMetaDataSource().getTypeInfo("Account");
         NsObjectInputTransducer transducer = new NsObjectInputTransducer(clientService, schema, typeDesc.getTypeName());
         List<IndexedRecord> recordList = new ArrayList<>(refList.size());
@@ -410,12 +417,12 @@ public class NetSuiteOutputWriterIT extends AbstractNetSuiteTestBase {
 
         List<NsReadResponse<Message>> readResponseList = clientService.execute(
                 new NetSuiteClientService.PortOperation<List<NsReadResponse<Message>>, NetSuitePortType>() {
-            @Override public List<NsReadResponse<Message>> execute(NetSuitePortType port) throws Exception {
-                GetListRequest request = new GetListRequest();
-                request.getBaseRef().addAll(refList);
-                return NetSuiteClientServiceImpl.toNsReadResponseList(port.getList(request).getReadResponseList());
-            }
-        });
+                    @Override public List<NsReadResponse<Message>> execute(NetSuitePortType port) throws Exception {
+                        GetListRequest request = new GetListRequest();
+                        request.getBaseRef().addAll(refList);
+                        return NetSuiteClientServiceImpl.toNsReadResponseList(port.getList(request).getReadResponseList());
+                    }
+                });
 
         for (NsReadResponse<Message> readResponse : readResponseList) {
             // success=false means that NetSuite Record was not found because it was deleted
@@ -442,7 +449,7 @@ public class NetSuiteOutputWriterIT extends AbstractNetSuiteTestBase {
         Schema schema = dataSetRuntime.getSchema(properties.module.moduleName.getValue());
         Schema targetSchema = TestUtils.makeRecordSchema(schema, Arrays.asList(
                 "name", "custrecord79", "custrecord80"
-        ));
+                ));
         properties.module.main.schema.setValue(targetSchema);
 
         Schema targetFlowSchema = dataSetRuntime.getSchemaForUpdateFlow(
@@ -526,6 +533,112 @@ public class NetSuiteOutputWriterIT extends AbstractNetSuiteTestBase {
         }
 
         clientService.deleteList(refList);
+    }
+
+    @Test
+    public void testCreateAndDeleteJournalEntryRecords() throws Exception {
+        clientService.getMetaDataSource().setCustomizationEnabled(true);
+        NetSuiteOutputProperties properties = new NetSuiteOutputProperties("test");
+        properties.init();
+        properties.connection.customizationEnabled.setValue(true);
+        properties.connection.referencedComponent.componentInstanceId.setValue(CONNECTION_COMPONENT_ID);
+        properties.connection.referencedComponent.setReference(connectionProperties);
+
+        properties.module.moduleName.setValue(RecordTypeEnum.JOURNAL_ENTRY.getTypeName());
+        properties.module.action.setValue(OutputAction.ADD);
+
+        NetSuiteRuntimeImpl runtime = new NetSuiteRuntimeImpl();
+        runtime.setClientFactory(clientFactory);
+
+        NetSuiteDatasetRuntime dataSetRuntime = runtime.getDatasetRuntime(CONTAINER, properties);
+
+        Schema schema = dataSetRuntime.getSchema(RecordTypeEnum.JOURNAL_ENTRY.getTypeName());
+        Schema targetSchema = TestUtils
+                .makeRecordSchema(schema, Arrays
+                        .asList("internalId", "externalId",
+                                "subsidiary", "tranDate", "lineList", "custbody113"
+                                ));
+
+        properties.module.main.schema.setValue(targetSchema);
+        properties.module.flowSchema.schema.setValue(targetSchema);
+
+        NetSuiteSink sink = new NetSuiteSinkImpl();
+        sink.initialize(CONTAINER, properties);
+
+        NetSuiteWriteOperation writeOperation = (NetSuiteWriteOperation) sink.createWriteOperation();
+        NetSuiteOutputWriter writer = (NetSuiteOutputWriter) writeOperation.createWriter(CONTAINER);
+        writer.open(UUID.randomUUID().toString());
+        writer.write(prepareJournalEntry(targetSchema));
+        final IndexedRecord record = ((List<IndexedRecord>) writer.getSuccessfulWrites()).get(0);
+        writer.close();
+        final String internalId = (String) record.get(record.getSchema().getField("InternalId").pos());
+        List<NsReadResponse<JournalEntry>> readResponseList = clientService.execute((NetSuitePortType p) -> {
+            GetListRequest request = new GetListRequest();
+
+            request
+            .getBaseRef()
+            .addAll(Arrays.asList(createRecordRef(internalId, "journalEntry")));
+            return NetSuiteClientServiceImpl.toNsReadResponseList(p.getList(request).getReadResponseList());
+        });
+
+        String customField = Optional
+                .ofNullable(readResponseList)
+                .filter(l -> !l.isEmpty())
+                .map(l -> l.get(0).getRecord().getCustomFieldList().getCustomField())
+                .filter(l -> !l.isEmpty())
+                .map(l -> l.get(0))
+                .filter(MultiSelectCustomFieldRef.class::isInstance)
+                .map(MultiSelectCustomFieldRef.class::cast)
+                .map(field -> field.getValue().get(0).getInternalId())
+                .get();
+        Assert.assertEquals(customField, "122");
+
+        targetSchema = TestUtils.makeRecordSchema(schema, Arrays.asList("internalId"));
+        properties.module.action.setValue(OutputAction.DELETE);
+        properties.module.main.schema.setValue(targetSchema);
+        properties.module.flowSchema.schema.setValue(targetSchema);
+        sink.initialize(CONTAINER, properties);
+        writeOperation = (NetSuiteWriteOperation) sink.createWriteOperation();
+        writer = (NetSuiteOutputWriter) writeOperation.createWriter(CONTAINER);
+        IndexedRecord deleteRecord = new GenericData.Record(targetSchema);
+        deleteRecord.put(0, internalId);
+        writer.open(UUID.randomUUID().toString());
+        writer.write(deleteRecord);
+        writer.close();
+
+        readResponseList = clientService.execute((NetSuitePortType p) -> {
+            GetListRequest request = new GetListRequest();
+
+            request
+            .getBaseRef()
+            .addAll(Arrays.asList(createRecordRef(internalId, "journalEntry")));
+            return NetSuiteClientServiceImpl.toNsReadResponseList(p.getList(request).getReadResponseList());
+        });
+        Assert
+                .assertTrue(StatusDetailCodeType.RCRD_DSNT_EXIST == StatusDetailCodeType
+                        .valueOf(readResponseList.get(0).getStatus().getDetails().get(0).getCode()));
+    }
+
+    private IndexedRecord prepareJournalEntry(Schema targetSchema) {
+
+        IndexedRecord record  = new GenericData.Record(targetSchema);
+        record.put(targetSchema.getField("Subsidiary").pos(), "{\"internalId\":\"1\"}");
+        record.put(targetSchema.getField("Custbody113").pos(), "{\"value\":[{\"internalId\":\"122\"}]}");
+        record
+        .put(targetSchema.getField("LineList").pos(),
+                "{\"line\":[{\"account\":{\"internalId\":\"122\"},\"debit\":3.0},{\"account\":{\"internalId\":\"115\"},\"credit\":3.0}]}");
+        record
+        .put(targetSchema.getField("TranDate").pos(),
+                Date.from(ZonedDateTime.parse("2019-01-04T11:15:30-05:00").toInstant()));
+
+        return record;
+    }
+
+    private RecordRef createRecordRef(String internalId, String recordType) {
+        RecordRef recordRef = new RecordRef();
+        recordRef.setInternalId(internalId);
+        recordRef.setType(RecordType.fromValue(recordType));
+        return recordRef;
     }
 
     private static List<Message> makeMessageRecords(int count) {
