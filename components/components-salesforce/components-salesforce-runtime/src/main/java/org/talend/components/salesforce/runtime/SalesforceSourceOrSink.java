@@ -12,22 +12,23 @@
 // ============================================================================
 package org.talend.components.salesforce.runtime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 
 import org.apache.avro.Schema;
@@ -89,6 +90,8 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
 
     protected static final String KEY_CONNECTION_BULK = "ConnectionBulk";
 
+    protected static int MUTUAL_AUTHENTICATION_PORT = 8443;
+
     private String sessionFilePath;
 
     private String sessionId;
@@ -130,6 +133,9 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
          */
         ConnectorConfig bulkConfig = new ConnectorConfig();
         setProxy(bulkConfig);
+        if (config.getSslContext() != null) {
+            bulkConfig.setSslContext(config.getSslContext());
+        }
         bulkConfig.setSessionId(config.getSessionId());
         // For session renew
         bulkConfig.setSessionRenewer(config.getSessionRenewer());
@@ -166,18 +172,19 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
      * @throws ConnectionException create connection fails
      */
     protected PartnerConnection doConnection(ConnectorConfig config, boolean openNewSession) throws ConnectionException {
+        SalesforceConnectionProperties connProps = getConnectionProperties();
+        boolean isOAuth = SalesforceConnectionProperties.LoginType.OAuth.equals(connProps.loginType.getValue());
         if (!openNewSession) {
             config.setSessionId(this.sessionId);
             config.setServiceEndpoint(this.serviceEndPoint);
         } else {
-            SalesforceConnectionProperties connProps = getConnectionProperties();
             String endpoint = connProps.endpoint.getStringValue();
             if (endpoint != null && endpoint.contains(SalesforceConnectionProperties.RETIRED_ENDPOINT)) {
                 endpoint = endpoint.replaceFirst(SalesforceConnectionProperties.RETIRED_ENDPOINT,
                         SalesforceConnectionProperties.ACTIVE_ENDPOINT);
             }
             endpoint = StringUtils.strip(endpoint, "\"");
-            if (SalesforceConnectionProperties.LoginType.OAuth.equals(connProps.loginType.getValue())) {
+            if (isOAuth) {
                 SalesforceOAuthConnection oauthConnection = new SalesforceOAuthConnection(connProps, endpoint,
                         connProps.apiVersion.getValue());
                 oauthConnection.login(config);
@@ -201,6 +208,18 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
             if (this.sessionId != null && this.serviceEndPoint != null) {
                 // update session file with current sessionId/serviceEndPoint
                 setupSessionProperties(connection);
+            }
+        }
+        if(!isOAuth && connProps.sslProperties.mutualAuth.getValue()){
+
+            String soapEndpoint = config.getServiceEndpoint();
+            try {
+                SSLContext sslContext = getSSLContext(connProps.sslProperties.keyStorePath.getValue(),connProps.sslProperties.keyStorePwd.getValue());
+                config.setSslContext(sslContext);
+                config.setServiceEndpoint(changeServicePort(soapEndpoint,MUTUAL_AUTHENTICATION_PORT));
+            } catch (Throwable e) {
+                LOG.error(e.getMessage(),e);
+                throw new ConnectionException(e.getMessage());
             }
         }
         return connection;
@@ -611,6 +630,30 @@ public class SalesforceSourceOrSink implements SalesforceRuntimeSourceOrSink, Sa
     @Override
     public String guessQuery(Schema schema, String entityName) {
         return new SoqlQueryBuilder(schema, entityName).buildSoqlQuery();
+    }
+
+    protected SSLContext getSSLContext(String ksPath, String ksPwd) throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException, CertificateException, UnrecoverableKeyException {
+        // Make a KeyStore from the PKCS-12 file
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        try (FileInputStream fis = new FileInputStream(ksPath)) {
+            ks.load(fis, ksPwd.toCharArray());
+
+            // Make a KeyManagerFactory from the KeyStore
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ks, ksPwd.toCharArray());
+
+            // Now make an SSL Context with our Key Manager and the default Trust Manager
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), null, null);
+            return sslContext;
+        }
+    }
+
+    public static String changeServicePort(String url, int port) throws URISyntaxException {
+        URI uri = new URI(url);
+        return new URI(
+                uri.getScheme(), uri.getUserInfo(), uri.getHost(),
+                port, uri.getPath(), uri.getQuery(), uri.getFragment()).toString();
     }
 
 }
