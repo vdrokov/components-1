@@ -64,7 +64,7 @@ public abstract class UgiFileSourceBase<K, V, SourceT extends UgiFileSourceBase<
     }
 
     @Override
-    protected Job jobInstance() throws IOException {
+    public Job jobInstance() throws IOException {
         Job job = super.jobInstance();
         extraConfig.addTo(job.getConfiguration());
         return job;

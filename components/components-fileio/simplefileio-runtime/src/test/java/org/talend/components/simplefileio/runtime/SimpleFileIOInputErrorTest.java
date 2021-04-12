@@ -65,8 +65,7 @@ public class SimpleFileIOInputErrorTest {
         // The exception that should be thrown.
         thrown.expect(TalendRuntimeException.class);
         thrown.expect(hasProperty("code", is(SimpleFileIOErrorCode.INPUT_NOT_AUTHORIZED)));
-        thrown.expectMessage("baduser can not read from " + fileSpec
-                + ". Please check user permissions or existence of base directory.");
+        thrown.expectMessage("Can not read from "+fileSpec+". Please check user permissions or existence of base directory.");
 
         try {
             // Use the runtime in a direct pipeline to test.

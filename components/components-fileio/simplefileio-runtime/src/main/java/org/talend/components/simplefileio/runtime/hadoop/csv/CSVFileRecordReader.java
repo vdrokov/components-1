@@ -56,6 +56,8 @@ public class CSVFileRecordReader extends RecordReader<LongWritable, BytesWritabl
   private Character textEnclosure;
   private Character escapeChar;
 
+  private boolean emptySplit;
+
   private boolean isComplexCSV = false;
 
   public CSVFileRecordReader() {
@@ -77,10 +79,16 @@ public class CSVFileRecordReader extends RecordReader<LongWritable, BytesWritabl
   public void initialize(InputSplit genericSplit, TaskAttemptContext context) throws IOException {
     FileSplit split = (FileSplit) genericSplit;
     Configuration job = context.getConfiguration();
+    initialize(split, job);
+  }
+
+  public void initialize(FileSplit split, Configuration job) throws IOException {
     this.maxLineLength = job.getInt(MAX_LINE_LENGTH, Integer.MAX_VALUE);
     start = split.getStart();
     end = start + split.getLength();
     final Path file = split.getPath();
+
+    emptySplit = (start == 0) && (end == 0);
 
     // open the file and seek to the start of the split
     final FileSystem fs = file.getFileSystem(job);
@@ -91,7 +99,8 @@ public class CSVFileRecordReader extends RecordReader<LongWritable, BytesWritabl
       isCompressedInput = true;
       decompressor = CodecPool.getDecompressor(codec);
       if (codec instanceof SplittableCompressionCodec) {
-        final SplitCompressionInputStream cIn = ((SplittableCompressionCodec) codec).createInputStream(fileIn, decompressor, start, end, SplittableCompressionCodec.READ_MODE.BYBLOCK);
+        final SplitCompressionInputStream cIn = ((SplittableCompressionCodec) codec).createInputStream(fileIn,
+                decompressor, start, end, SplittableCompressionCodec.READ_MODE.BYBLOCK);
         in = new CompressedSplitLineReader(cIn, job, this.recordDelimiterBytes);
         start = cIn.getAdjustedStart();
         end = cIn.getAdjustedEnd();
@@ -125,7 +134,7 @@ public class CSVFileRecordReader extends RecordReader<LongWritable, BytesWritabl
     return isCompressedInput ? Integer.MAX_VALUE : (int) Math.max(Math.min(Integer.MAX_VALUE, end - pos), maxLineLength);
   }
 
-  private long getFilePosition() throws IOException {
+  public long getFilePosition() throws IOException {
     long retVal;
     if (isCompressedInput && null != filePosition) {
       retVal = filePosition.getPos();
@@ -231,6 +240,9 @@ public class CSVFileRecordReader extends RecordReader<LongWritable, BytesWritabl
   }
 
   public boolean nextKeyValue() throws IOException {
+    if (emptySplit) {
+      return false;
+    }
     if (!isComplexCSV || (textEnclosure == null)) {//escape char also can escape newLine?not common, textEnclosure is more common for that case.
       boolean hasNext = next();
 

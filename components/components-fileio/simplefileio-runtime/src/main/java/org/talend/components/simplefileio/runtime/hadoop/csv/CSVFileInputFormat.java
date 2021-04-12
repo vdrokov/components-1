@@ -34,11 +34,18 @@ public class CSVFileInputFormat extends org.apache.hadoop.mapreduce.lib.input.Fi
   public static String TALEND_ENCODING = "talend_encoding";
   
   public static String TALEND_TEXT_ENCLOSURE = "talend_text_enclosure";
+
   public static String TALEND_ESCAPE = "talend_escape";
   // not in the design
   public static String TALEND_ROW_DELIMITED = "talend_row_delimited";
 
+  public static String TALEND_FIELD_DELIMITED = "talend_field_delimited";
+
   public static String TALEND_HEADER = "talend_header";
+
+  public static String FILE_TO_FETCH_SCHEMA = "file_to_fetch_schema";
+
+  public static String SKIP_LENGTH_FOR_FILE_TO_FETCH_SCHEMA = "skip_length_for_file_to_fetch_schema";
 
   private static final Log LOG = LogFactory.getLog(CSVFileInputFormat.class);
 
@@ -72,16 +79,37 @@ public class CSVFileInputFormat extends org.apache.hadoop.mapreduce.lib.input.Fi
 
   private long caculateSkipLength(FileStatus file, JobContext job) throws IOException {
     long header = job.getConfiguration().getLong(TALEND_HEADER, 0l);
-    String rowDelimiter = job.getConfiguration().get(TALEND_ROW_DELIMITED);
-    String encoding = job.getConfiguration().get(TALEND_ENCODING);
 
     if (header < 1) {
       return 0l;
     }
+    String rowDelimiter = job.getConfiguration().get(TALEND_ROW_DELIMITED);
+    String encoding = job.getConfiguration().get(TALEND_ENCODING);
+    String text_enclosure = job.getConfiguration().get(TALEND_TEXT_ENCLOSURE);
+    String escape = job.getConfiguration().get(TALEND_ESCAPE);
 
-    try (CSVFileRecordReader reader = this.createRecordReader(rowDelimiter, encoding, null, null)) {
-      // TODO check if right for compress especially
-      return reader.skipHeader(file, header, job);
+    String file_to_fetch_schema = job.getConfiguration().get(FILE_TO_FETCH_SCHEMA);
+
+    // the file have been computer when fetch schema
+    if (file_to_fetch_schema != null && file_to_fetch_schema.equals(file.getPath().toString())) {
+      long skip_length_for_file_to_fetch_schema = job.getConfiguration().getLong(SKIP_LENGTH_FOR_FILE_TO_FETCH_SCHEMA, 0);
+      return skip_length_for_file_to_fetch_schema;
+    }
+
+    try (CSVFileRecordReader reader = this.createRecordReader(rowDelimiter, encoding,
+            (text_enclosure != null && text_enclosure.length() > 0) ? text_enclosure.charAt(0) : null,
+            (escape != null && escape.length() > 0) ? escape.charAt(0) : null)) {
+      CSVFileSplit split = new CSVFileSplit(file.getPath(), 0, file.getLen(), 0, new String[0]);
+      reader.initialize(split, job.getConfiguration());
+      boolean hasNext = false;
+      while ((header--) > 0 && (hasNext = reader.nextKeyValue())) {
+      }
+
+      if (!hasNext && header >= 0) {
+        LOG.info("header value exceed the limit of the file for : " + file.getPath());
+      }
+
+      return reader.getFilePosition();
     }
   }
 
@@ -134,7 +162,7 @@ public class CSVFileInputFormat extends org.apache.hadoop.mapreduce.lib.input.Fi
         }
       } else {
         // Create empty hosts array for zero length files
-        splits.add(makeSplit(path, 0, length, 0, new String[0]));
+        splits.add(makeSplit(path, 0, length, 0, new String[0], null));
       }
     }
     // Save the number of input files for metrics/loadgen

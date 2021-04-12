@@ -66,7 +66,7 @@ public class SimpleFileIOInputRuntime extends PTransform<PBegin, PCollection<Ind
             rf = new SimpleRecordFormatCsvIO(doAs, path, limit, dataset.getRecordDelimiter(),
                 dataset.getMaxRowSize(),
                 dataset.getFieldDelimiter(), dataset.getEncoding(), 
-                dataset.getHeaderLine(), dataset.getTextEnclosureCharacter(), dataset.getEscapeCharacter());
+                dataset.getHeaderLine(), dataset.getTextEnclosureCharacter(), dataset.getEscapeCharacter(),dataset.getDatastoreProperties().userName.getValue(),false);
             break;
 
         case PARQUET:

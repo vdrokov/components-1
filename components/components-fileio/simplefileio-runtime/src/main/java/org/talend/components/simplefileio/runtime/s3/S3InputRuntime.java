@@ -68,7 +68,7 @@ public class S3InputRuntime extends PTransform<PBegin, PCollection<IndexedRecord
             S3DatasetProperties dataset = properties.getDatasetProperties();
             rf = new SimpleRecordFormatCsvIO(doAs, path, limit, dataset.getRecordDelimiter(),
                 dataset.getMaxRowSize(), dataset.getFieldDelimiter(), dataset.getEncoding(),
-                dataset.getHeaderLine(), dataset.getTextEnclosureCharacter(), dataset.getEscapeCharacter());
+                dataset.getHeaderLine(), dataset.getTextEnclosureCharacter(), dataset.getEscapeCharacter(),null,true);
             break;
 
         case PARQUET:

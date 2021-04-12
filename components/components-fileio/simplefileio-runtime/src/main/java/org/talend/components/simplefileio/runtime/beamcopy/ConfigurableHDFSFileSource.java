@@ -297,7 +297,12 @@ public class ConfigurableHDFSFileSource<K, V> extends BoundedSource<KV<K, V>> {
         return size;
     }
 
-    private <K, V> List<FileStatus> listStatus(FileInputFormat<K, V> format, JobContext jobContext) throws NoSuchMethodException,
+    public List<FileStatus> listStatus(Job job)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException, IOException {
+        return listStatus(createFormat(job), job);
+    }
+
+    public <K, V> List<FileStatus> listStatus(FileInputFormat<K, V> format, JobContext jobContext) throws NoSuchMethodException,
             InvocationTargetException, IllegalAccessException {
         // FileInputFormat#listStatus is protected, so call using reflection
         Method listStatus = FileInputFormat.class.getDeclaredMethod("listStatus", JobContext.class);

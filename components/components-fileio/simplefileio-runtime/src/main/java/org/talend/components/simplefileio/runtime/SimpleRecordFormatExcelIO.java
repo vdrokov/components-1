@@ -41,7 +41,7 @@ public class SimpleRecordFormatExcelIO extends SimpleRecordFormatBase {
         super(doAs, path, overwrite, limit, mergeOutput);
         this.sheetName = sheetName;
         this.encoding = encoding;
-        this.header = header;
+        this.header = header < 1 ? 0 : header;
         this.footer = footer;
         this.excelFormat = excelFormat;
     }

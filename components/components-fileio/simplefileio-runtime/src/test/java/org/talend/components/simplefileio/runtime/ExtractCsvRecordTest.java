@@ -19,16 +19,16 @@ public class ExtractCsvRecordTest {
 
     /** The DoFn under test. */
     //no quote, no escape
-    private final DoFnTester<BytesWritable, IndexedRecord> fnBasic = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", null, null));
+    private final DoFnTester<BytesWritable, IndexedRecord> fnBasic = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", null, null,null));
     
     //quote : ", no escape char
-    private final DoFnTester<BytesWritable, IndexedRecord> fnQuote = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", '\"', null));
+    private final DoFnTester<BytesWritable, IndexedRecord> fnQuote = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", '\"', null,null));
     
     //quote : ", escape char : \
-    private final DoFnTester<BytesWritable, IndexedRecord> fnQuoteAndEscape = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", '\"', '\\'));
+    private final DoFnTester<BytesWritable, IndexedRecord> fnQuoteAndEscape = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "UTF-8", '\"', '\\',null));
     
     //encoding only
-    private final DoFnTester<BytesWritable, IndexedRecord> fnEncoding = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "GBK", null, null));
+    private final DoFnTester<BytesWritable, IndexedRecord> fnEncoding = DoFnTester.of(new SimpleRecordFormatCsvIO.ExtractCsvRecord(';', false, "GBK", null, null,null));
 
     public static String[] toArray(IndexedRecord record) {
         String[] fields = new String[record.getSchema().getFields().size()];
