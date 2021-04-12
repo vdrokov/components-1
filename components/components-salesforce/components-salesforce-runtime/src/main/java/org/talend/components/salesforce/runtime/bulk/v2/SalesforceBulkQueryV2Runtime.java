@@ -49,7 +49,7 @@ public class SalesforceBulkQueryV2Runtime {
 
     private ContentType contentType;
 
-    private JobInfoV2 job;
+    JobInfoV2 job;
 
     private BulkV2Connection bulkV2Connection;
 
@@ -77,7 +77,7 @@ public class SalesforceBulkQueryV2Runtime {
         }
         setIncludeDeleted(sprops.includeDeleted.getValue());
         this.useResultLocator = sprops.useResultLocator.getValue();
-        this.maxRecords =  sprops.maxRecords.getValue();
+        this.maxRecords = sprops.maxRecords.getValue();
         // The content type for the job. The only valid value (and the default) is CSV
         if (true) {
             contentType = ContentType.CSV;
@@ -155,22 +155,21 @@ public class SalesforceBulkQueryV2Runtime {
 
     public BulkResultSet getResultSet() throws IOException {
         if (hasMoreResult) {
-            if (this.useResultLocator) {
-                if (resultRequest == null) {
-                    resultRequest = new GetQueryJobResultRequest();
-                    resultRequest.setQueryJobId(job.getId());
+            if (resultRequest == null) {
+                resultRequest = new GetQueryJobResultRequest();
+                resultRequest.setQueryJobId(job.getId());
+                if (useResultLocator) {
                     resultRequest.setMaxRecords(maxRecords);
                 }
-                InputStream inputStream = bulkV2Connection.getResult(resultRequest);
-                if (resultRequest.getLocator() == null) {
-                    hasMoreResult = false;
-                }
-                return getResultSet(inputStream);
-            }else{
-                hasMoreResult = false;
-                return getResultSet(bulkV2Connection.getResult(job.getId()));
             }
-        }else{
+
+            InputStream inputStream = bulkV2Connection.getResult(resultRequest);
+            if (resultRequest.getLocator() == null) {
+                hasMoreResult = false;
+            }
+
+            return getResultSet(inputStream);
+        } else {
             return null;
         }
     }

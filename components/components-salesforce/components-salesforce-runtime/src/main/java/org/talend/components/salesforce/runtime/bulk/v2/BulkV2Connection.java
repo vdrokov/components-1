@@ -242,6 +242,8 @@ public class BulkV2Connection {
             endpoint += "?maxRecords=" + request.getMaxRecords();
         } else if (request.getLocator() != null && request.getMaxRecords() != null && request.getMaxRecords() > 0) {
             endpoint += "?locator=" + request.getLocator() + "&maxRecords=" + request.getMaxRecords();
+        } else if (request.getLocator() != null) {
+            endpoint += "?locator=" + request.getLocator();
         }
         try {
             HttpGet httpGet = (HttpGet) createRequest(endpoint, HttpMethod.GET);
