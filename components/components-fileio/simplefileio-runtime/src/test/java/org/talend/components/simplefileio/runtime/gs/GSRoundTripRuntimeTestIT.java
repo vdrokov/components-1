@@ -31,6 +31,7 @@ import org.apache.beam.sdk.values.PCollection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.talend.components.adapter.beam.gcp.GcpServiceAccountOptions;
@@ -43,6 +44,7 @@ import org.talend.components.simplefileio.runtime.SimpleFileIODatasetRuntimeTest
 import org.talend.components.simplefileio.runtime.SimpleFileIOInputRuntime;
 import org.talend.components.simplefileio.runtime.SimpleFileIOOutputRuntime;
 import org.talend.components.test.DisableIfMissingConfig;
+
 
 public class GSRoundTripRuntimeTestIT {
     @ClassRule
@@ -81,6 +83,7 @@ public class GSRoundTripRuntimeTestIT {
     }
 
     @Test
+    @Ignore
     public void testCsv() {
         List<IndexedRecord> expected = new ArrayList<>();
         expected.add(ConvertToIndexedRecord.convertToAvro(new String[] { "1", "one" }));
