@@ -12,13 +12,10 @@
 // ============================================================================
 package org.talend.components.simplefileio.runtime;
 
-import java.util.Arrays;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.beam.runners.direct.DirectOptions;
 import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.transforms.Sample;
 import org.talend.components.adapter.beam.BeamLocalRunnerOption;
 import org.talend.components.adapter.beam.transform.DirectConsumerCollector;
 import org.talend.components.api.container.RuntimeContainer;
@@ -71,10 +68,6 @@ public class SimpleFileIODatasetRuntime implements DatasetRuntime<SimpleFileIODa
 
     @Override
     public Schema getSchema() {
-        System.out.println("######### getSchema()");
-        String s1 = Arrays.toString(Thread.currentThread().getStackTrace());
-        System.out.println(s1);
-
         // Simple schema container.
         final Schema[] s = new Schema[] { AvroUtils.createEmptySchema() };
         // Try to get one record and determine its schema in a callback.
@@ -86,10 +79,7 @@ public class SimpleFileIODatasetRuntime implements DatasetRuntime<SimpleFileIODa
             }
         });
         // Return the discovered schema.
-        System.out.println("schema: " + s[0]);
-        Schema parse = Schema.parse(
-                "{\"type\":\"record\",\"name\":\"StringArrayRecord\",\"fields\":[{\"name\":\"col1\",\"type\":\"string\"},{\"name\":\"col2\",\"type\":\"string\"},{\"name\":\"col3\",\"type\":\"string\"},{\"name\":\"col4\",\"type\":\"string\"}]}");
-        return parse;
+        return s[0];
     }
 
     //getSample is not a good name for the data set interface, as sometimes, it is used to fetch all data in data set definition, not sample
@@ -97,9 +87,6 @@ public class SimpleFileIODatasetRuntime implements DatasetRuntime<SimpleFileIODa
     //fetch all data
     @Override
     public void getSample(int limit, Consumer<IndexedRecord> consumer) {
-        System.out.println("######### getSample() limit： "+limit);
-        String s1 = Arrays.toString(Thread.currentThread().getStackTrace());
-        System.out.println(s1);
         // Create an input runtime based on the properties.
         SimpleFileIOInputRuntime inputRuntime = new SimpleFileIOInputRuntime();
         SimpleFileIOInputProperties inputProperties = new SimpleFileIOInputProperties(null);

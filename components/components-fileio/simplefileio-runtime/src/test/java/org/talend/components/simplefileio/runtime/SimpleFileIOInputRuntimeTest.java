@@ -25,6 +25,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.avro.Schema;
+import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.testing.PAssert;
@@ -38,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.components.adapter.beam.transform.ConvertToIndexedRecord;
 import org.talend.components.api.component.ComponentDefinition;
+import org.talend.components.simplefileio.SimpleFileIODatasetProperties;
 import org.talend.components.simplefileio.SimpleFileIODatasetProperties.FieldDelimiterType;
 import org.talend.components.simplefileio.SimpleFileIODatasetProperties.RecordDelimiterType;
 import org.talend.components.simplefileio.SimpleFileIOFormat;
@@ -47,6 +50,7 @@ import org.talend.components.simplefileio.output.SimpleFileIOOutputProperties;
 import org.talend.components.test.BeamDirectTestResource;
 import org.talend.components.test.MiniDfsResource;
 import org.talend.components.test.RecordSet;
+import org.talend.daikon.avro.converter.IndexedRecordConverter;
 import org.talend.daikon.runtime.RuntimeUtil;
 
 /**
@@ -141,6 +145,52 @@ public class SimpleFileIOInputRuntimeTest {
         List<IndexedRecord> expected = new ArrayList<>();
         for (String record : inputFile.split("\r\n")) {
             expected.add(ConvertToIndexedRecord.convertToAvro(record.split(" ")));
+        }
+        PAssert.that(readLines).containsInAnyOrder(expected);
+
+        // And run the test.
+        p.run().waitUntilFinish();
+    }
+
+
+    @Test
+    public void testBasicCSV_withHeader() throws IOException, URISyntaxException {
+        String inputFile = writeRandomCsvFile(mini.getFs(), "/user/test/input.csv", 0, 0, 10, 10, 6, ",", "\r\n");
+        String fileSpec = mini.getFs().getUri().resolve("/user/test/input.csv").toString();
+
+        // Configure the component.
+        SimpleFileIOInputProperties inputProps = createInputComponentProperties();
+        SimpleFileIODatasetProperties datasetProperties = inputProps.getDatasetProperties();
+        datasetProperties.path.setValue(fileSpec);
+        datasetProperties.recordDelimiter.setValue(RecordDelimiterType.CRLF);
+        datasetProperties.fieldDelimiter.setValue(FieldDelimiterType.COMMA);
+        datasetProperties.setHeaderLine.setValue(true);
+        datasetProperties.headerLine.setValue(1);
+
+        // Create the runtime.
+        SimpleFileIOInputRuntime runtime = new SimpleFileIOInputRuntime();
+        runtime.initialize(null, inputProps);
+
+        // Use the runtime in a direct pipeline to test.
+        final Pipeline p = beam.createPipeline();
+        PCollection<IndexedRecord> readLines = p.apply(runtime);
+        
+
+        // Check the expected values.
+        List<IndexedRecord> expected = new ArrayList<>();
+        Boolean isHeader = true;
+        IndexedRecordConverter converter = new SimpleFileIOAvroRegistry.StringArrayToIndexedRecordConverter();
+        for (String record : inputFile.split("\r\n")) {
+            if(isHeader){
+                isHeader = false;
+                SchemaBuilder.FieldAssembler<Schema> fa = SchemaBuilder.record("StringArrayRecord").fields();
+                for (String col : record.split(",")) {
+                    fa = fa.name("t"+col).type(Schema.create(Schema.Type.STRING)).noDefault();
+                }
+                converter.setSchema(fa.endRecord());
+                continue;
+            }
+            expected.add((IndexedRecord) converter.convertToAvro(record.split(",")));
         }
         PAssert.that(readLines).containsInAnyOrder(expected);
 
