@@ -170,8 +170,7 @@
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <!-- issues when using latest plugin version, so we stick to this release. -->
-                <version>0.26.0</version>
+                <version>${docker-maven-plugin.version}</version>
 
                 <executions>
                     <execution>
@@ -201,6 +200,9 @@
                                             </http>
                                             <time>60000</time>
                                         </wait>
+                                        <log>
+                                            <enabled>true</enabled>
+                                        </log>
                                     </run>
                                 </image>
                             </images>

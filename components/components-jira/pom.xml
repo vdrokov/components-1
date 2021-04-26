@@ -282,6 +282,9 @@
                                             </http>
                                             <time>300000</time>
                                         </wait>
+                                        <log>
+                                            <enabled>true</enabled>
+                                        </log>
                                     </run>
                                 </image>
                             </images>

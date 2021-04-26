@@ -41,18 +41,33 @@ spec:
             image: '${env.TSBI_IMAGE}'
             command: [cat]
             tty: true
-            volumeMounts: [{name: docker, mountPath: /var/run/docker.sock}, {name: m2main, mountPath: /root/.m2/repository}, {name: dockercache, mountPath: /root/.dockercache}]
+            volumeMounts: [{name: m2main, mountPath: /root/.m2/repository}]
             resources: {requests: {memory: 3G, cpu: '2.5'}, limits: {memory: 3G, cpu: '2.5'}}
-    volumes:
+            env:
+              - name: DOCKER_HOST
+                value: tcp://localhost:2375
         -
-            name: docker
-            hostPath: {path: /var/run/docker.sock}
+            name: dind-daemon
+            image: docker:19.03-dind
+            resources:
+                requests:
+                    cpu: 2.5
+                    memory: 3G
+            securityContext:
+                privileged: true
+            volumeMounts:
+              - name: docker-graph-storage
+                mountPath: /var/lib/docker
+            env:
+              - name: DOCKER_TLS_CERTDIR
+                value: ""
+    volumes:
         -
             name: m2main
             hostPath: {path: ${m2} }
         -
-            name: dockercache
-            hostPath: {path: /tmp/jenkins/tdi/docker}
+            name: docker-graph-storage
+            emptyDir: {}
     imagePullSecrets:
         - name: talend-registry
 """
@@ -60,6 +75,7 @@ spec:
     }
 
   environment {
+    MAVEN_OPTS = "-Dmaven.artifact.threads=128 -Dorg.slf4j.simpleLogger.showThreadName=true -Dorg.slf4j.simpleLogger.showDateTime=true -Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss -Dtalend.maven.decrypter.m2.location=${WORKSPACE}/.jenkins/"
     ARTIFACTORY_REGISTRY = "artifactory.datapwn.com"
   }
 
@@ -70,17 +86,46 @@ spec:
     disableConcurrentBuilds()
   }
 
+  parameters {
+    choice(name: 'Action',
+            choices: ['STANDARD', 'RELEASE'],
+            description: 'Kind of running : \nSTANDARD (default), normal building \nRELEASE : build release')
+  }
+
   stages {
-    stage('Build') {
+    stage('Compile | Test') {
+      when {
+        expression { params.Action == 'STANDARD' }
+      }
       steps {
         container('main') {
-           withCredentials([artifactoryCredentials]) {
+           withCredentials([gitCredentials, nexusCredentials, dockerCredentials, artifactoryCredentials]) {
              sh '''#!/bin/bash
              docker version
              echo $ARTIFACTORY_PASSWORD | docker login $ARTIFACTORY_REGISTRY -u $ARTIFACTORY_LOGIN --password-stdin
-             mvn clean install
+             mvn clean -B -U -V install
              '''
            }
+        }
+      }
+    }
+
+    stage('Compile | Test | Deploy') {
+      when {
+        expression { params.Action == 'RELEASE' }
+      }
+      steps {
+        container('main') {
+          withCredentials([gitCredentials, nexusCredentials, dockerCredentials, artifactoryCredentials]) {
+            sh '''
+              mvn clean -B -U -V -s ci/settings.xml deploy
+              '''
+            // -Dgit_branch="${escaped_branch}" \
+            // -Dbigquery.project="${bigquery_project}" \
+            // -Dbigquery.service.account.file="${service_account_file}" \
+            // -Dbigquery.gcp.temp.folder="${bigquery_gcp_temp_folder}" \
+            // -Dorg.talend.components.google.drive.service_account_file="${google_drive_service_account_file}"
+          }
         }
       }
     }
