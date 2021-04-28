@@ -173,8 +173,7 @@ public class NsObjectOutputTransducer extends NsObjectTransducer {
                 writeSimpleField(nsObject, typeIdFieldDesc.asSimple(),
                         false, nullFieldNames, customizationRef.getInternalId());
             } else if (recordTypeInfo.getRefType() == RefType.CUSTOM_TRANSACTION_REF) {
-                CustomTransactionTypeInfo customTransRecordTypeInfo = (CustomTransactionTypeInfo) recordTypeInfo;
-                String scriptId = customTransRecordTypeInfo.getName();
+                String scriptId = recordTypeInfo.getName();
                 FieldDesc customTransTypeFieldDesc = typeDesc.getField("scriptId");
                 nullFieldNames.remove("scriptId");
                 writeSimpleField(nsObject, customTransTypeFieldDesc.asSimple(), 
