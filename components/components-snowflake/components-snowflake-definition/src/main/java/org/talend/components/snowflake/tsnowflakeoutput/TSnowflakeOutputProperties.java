@@ -37,6 +37,7 @@ import org.talend.daikon.properties.ValidationResult;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.presentation.Widget;
 import org.talend.daikon.properties.property.Property;
+import org.talend.daikon.properties.property.PropertyFactory;
 import org.talend.daikon.serialize.PostDeserializeSetup;
 import org.talend.daikon.serialize.migration.SerializeSetVersion;
 
@@ -91,6 +92,8 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
      * or if we use the date pattern from schema.
      */
     public Property<Boolean> useSchemaDatePattern = newBoolean("useSchemaDatePattern");
+
+    public Property<Boolean> dieOnError = PropertyFactory.newBoolean("dieOnError").setRequired();
 
     // Have to use an explicit class to get the override of afterTableName(), an anonymous
     // class cannot be public and thus cannot be called.
@@ -169,6 +172,7 @@ public class TSnowflakeOutputProperties extends SnowflakeConnectionTableProperti
         mainForm.addRow(tableAction);
         mainForm.addRow(outputAction);
         mainForm.addColumn(widget(upsertKeyColumn).setWidgetType(Widget.ENUMERATION_WIDGET_TYPE));
+        mainForm.addRow(dieOnError);
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(convertColumnsAndTableToUppercase);

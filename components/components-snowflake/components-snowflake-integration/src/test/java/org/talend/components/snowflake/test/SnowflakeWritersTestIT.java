@@ -193,6 +193,15 @@ public class SnowflakeWritersTestIT extends SnowflakeRuntimeIOTestIT {
         assertEquals(100, readRows.size());
     }
 
+    @Test(expected = IOException.class)
+    public void testOutputDieOnError() throws Throwable {
+        SnowflakeConnectionTableProperties props = populateOutput(1);
+        ((TSnowflakeOutputProperties) props).dieOnError.setValue(true);
+        List<IndexedRecord> rows = makeRows(1);
+        rows.get(0).put(3, "aaa");
+        handleRows(rows, props, TSnowflakeOutputProperties.OutputAction.UPDATE);
+    }
+
     @Test
     public void testOutputFeedback() throws Throwable {
         TSnowflakeOutputProperties props = (TSnowflakeOutputProperties) getComponentService()

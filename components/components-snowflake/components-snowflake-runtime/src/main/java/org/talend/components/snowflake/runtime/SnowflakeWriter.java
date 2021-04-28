@@ -600,6 +600,10 @@ public class SnowflakeWriter implements WriterWithFeedback<Result, IndexedRecord
 
         prop.put(LoaderProperty.remoteStage, "~");
 
+        if (outputProperties.dieOnError.getValue()) {
+            prop.put(LoaderProperty.onError, "ABORT_STATEMENT");
+        }
+
         TableActionEnum selectedTableAction = outputProperties.tableAction.getValue();
         if (TableActionEnum.TRUNCATE.equals(selectedTableAction)) {
             prop.put(LoaderProperty.truncateTable, "true");
