@@ -269,8 +269,8 @@ public class NetSuiteOutputTransducerTest extends NetSuiteMockTestBase {
 
         for (IndexedRecord indexedRecord : indexedRecordList) {
             CustomTransactionRef transaction = (CustomTransactionRef) transducer.write(indexedRecord);
-            assertNotNull(transaction.getInternalId());
-            assertNotNull(transaction.getScriptId());
+            assertEquals("987654321", transaction.getInternalId());
+            assertEquals("customTransaction_1", transaction.getScriptId());
         }
     }
 
