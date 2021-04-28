@@ -92,7 +92,9 @@ public class AllSetting implements Serializable, JDBCAvroRegistryInfluencer {
     private ComponentProperties referencedComponentProperties;
 
     private Boolean enableSpecialTableName = false;
-    
+
+    private Boolean detectErrorOnMultipleSQL = false;
+
     public String bulkFile;
     
     public boolean append;
@@ -360,6 +362,14 @@ public class AllSetting implements Serializable, JDBCAvroRegistryInfluencer {
 
     public void setEnableSpecialTableName(Boolean enableSpecialTableName) {
         this.enableSpecialTableName = enableSpecialTableName;
+    }
+
+    public Boolean getDetectErrorOnMultipleSQL() {
+        return  detectErrorOnMultipleSQL != null && detectErrorOnMultipleSQL;
+    }
+
+    public void setDetectErrorOnMultipleSQL(Boolean detectErrorOnMultipleSQL) {
+        this.detectErrorOnMultipleSQL = detectErrorOnMultipleSQL;
     }
 
     @Override
@@ -657,6 +667,7 @@ public class AllSetting implements Serializable, JDBCAvroRegistryInfluencer {
                 ", propagateQueryResultSet=" + propagateQueryResultSet +
                 ", useColumn='" + useColumn + '\'' +
                 ", usePreparedStatement=" + usePreparedStatement +
+                ", detectErrorOnMultipleSQL=" + detectErrorOnMultipleSQL +
                 ", indexs=" + indexs +
                 ", types=" + types +
                 ", values=" + values +

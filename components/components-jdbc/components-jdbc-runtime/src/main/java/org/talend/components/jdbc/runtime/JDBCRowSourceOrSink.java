@@ -74,6 +74,7 @@ public class JDBCRowSourceOrSink extends JdbcRuntimeSourceOrSinkDefault {
         String sql = setting.getSql();
         boolean usePreparedStatement = setting.getUsePreparedStatement();
         boolean dieOnError = setting.getDieOnError();
+        boolean detectErrorOnMultipleSQL = setting.getDetectErrorOnMultipleSQL();
 
         Connection conn = null;
         try {
@@ -89,11 +90,19 @@ public class JDBCRowSourceOrSink extends JdbcRuntimeSourceOrSinkDefault {
                 try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     JdbcRuntimeUtils.setPreparedStatement(pstmt, setting.getIndexs(), setting.getTypes(), setting.getValues());
                     pstmt.execute();
+                    //In order to retrieve all the error messages, the method 'getMoreResults' needs to be called in loop.
+                    //https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/Statement.html#getMoreResults()
+                    if (detectErrorOnMultipleSQL) {
+                        while(pstmt.getMoreResults() || pstmt.getLargeUpdateCount() != -1);
+                    }
                 }
             } else {
                 try (Statement stmt = conn.createStatement()) {
                     LOG.debug("Executing the query: '{}'",sql);
                     stmt.execute(sql);
+                    if (detectErrorOnMultipleSQL) {
+                        while(stmt.getMoreResults() || stmt.getLargeUpdateCount() != -1);
+                    }
                 }
             }
 

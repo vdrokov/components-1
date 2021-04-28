@@ -98,6 +98,8 @@ public class TJDBCRowProperties extends FixedConnectorsComponentProperties imple
 
     public Property<Integer> commitEvery = PropertyFactory.newInteger("commitEvery").setRequired();
 
+    public Property<Boolean> detectErrorOnMultipleSQL = PropertyFactory.newBoolean("detectErrorOnMultipleSQL").setRequired();
+
     @Override
     public void setupLayout() {
         super.setupLayout();
@@ -128,7 +130,9 @@ public class TJDBCRowProperties extends FixedConnectorsComponentProperties imple
         advancedForm.addRow(usePreparedStatement);
         advancedForm.addRow(widget(preparedStatementTable).setWidgetType(Widget.TABLE_WIDGET_TYPE));
 
+        advancedForm.addRow(detectErrorOnMultipleSQL);
         advancedForm.addRow(commitEvery);
+
     }
 
     @Override
@@ -282,6 +286,8 @@ public class TJDBCRowProperties extends FixedConnectorsComponentProperties imple
         setting.setDataSource(this.dataSource.getValue());
         
         setting.setSchema(main.schema.getValue());
+
+        setting.setDetectErrorOnMultipleSQL(this.detectErrorOnMultipleSQL.getValue());
 
         return setting;
     }
