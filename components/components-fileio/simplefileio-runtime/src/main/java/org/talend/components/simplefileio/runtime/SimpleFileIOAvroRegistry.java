@@ -201,10 +201,13 @@ public class SimpleFileIOAvroRegistry extends AvroRegistry {
 
         private final CSVRecord value;
 
+        private Character sep;
+
         public CsvIndexedRecord(Schema schema, CSVRecord value) {
             this.schema = schema;
             this.value = value;
         }
+
 
         @Override
         public Schema getSchema() {
@@ -213,7 +216,11 @@ public class SimpleFileIOAvroRegistry extends AvroRegistry {
 
         @Override
         public Object get(int i) {
-            return value.get(i);
+            if (value.size() > i) {
+                return value.get(i);
+            } else {
+                return "";
+            }
         }
 
         @Override
