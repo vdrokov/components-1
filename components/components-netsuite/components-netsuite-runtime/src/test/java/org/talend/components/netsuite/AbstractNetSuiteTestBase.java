@@ -333,7 +333,7 @@ public abstract class AbstractNetSuiteTestBase {
 
         @Override
         public Collection<RecordTypeInfo> getCustomRecordTypes() {
-            return Arrays.asList(getCustomRecordType("custom_record_type_1"));
+            return Arrays.asList(getCustomRecordType("custom_record_type_1"), getCustomRecordType("customTransaction_1"));
         }
 
         @Override
@@ -345,6 +345,10 @@ public abstract class AbstractNetSuiteTestBase {
                     RecordTypeInfo customRecordTypeInfo =
                             TestUtils.readCustomRecord(clientService.getBasicMetaData(), recordTypeNode);
                     return customRecordTypeInfo;
+                } else if (typeName.equals("customTransaction_1")) {
+                    JsonNode recordTypeNode = objectMapper.readTree(getClass().getResource(
+                            "/test-data/customTransaction-1.json"));
+                    return TestUtils.readCustomTransaction(clientService.getBasicMetaData(), recordTypeNode);
                 }
                 return null;
             } catch (IOException e) {

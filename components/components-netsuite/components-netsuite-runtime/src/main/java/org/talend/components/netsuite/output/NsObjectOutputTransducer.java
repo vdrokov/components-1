@@ -32,6 +32,7 @@ import org.talend.components.netsuite.client.NetSuiteClientService;
 import org.talend.components.netsuite.client.NsRef;
 import org.talend.components.netsuite.client.model.BasicRecordType;
 import org.talend.components.netsuite.client.model.CustomRecordTypeInfo;
+import org.talend.components.netsuite.client.model.CustomTransactionTypeInfo;
 import org.talend.components.netsuite.client.model.FieldDesc;
 import org.talend.components.netsuite.client.model.RecordTypeDesc;
 import org.talend.components.netsuite.client.model.RecordTypeInfo;
@@ -171,6 +172,12 @@ public class NsObjectOutputTransducer extends NsObjectTransducer {
                 nullFieldNames.remove("typeId");
                 writeSimpleField(nsObject, typeIdFieldDesc.asSimple(),
                         false, nullFieldNames, customizationRef.getInternalId());
+            } else if (recordTypeInfo.getRefType() == RefType.CUSTOM_TRANSACTION_REF) {
+                String scriptId = recordTypeInfo.getName();
+                FieldDesc customTransTypeFieldDesc = typeDesc.getField("scriptId");
+                nullFieldNames.remove("scriptId");
+                writeSimpleField(nsObject, customTransTypeFieldDesc.asSimple(), 
+                        true, nullFieldNames, scriptId);
             }
         } else if (recordTypeInfo != null) {
             RecordTypeDesc recordTypeDesc = recordTypeInfo.getRecordType();

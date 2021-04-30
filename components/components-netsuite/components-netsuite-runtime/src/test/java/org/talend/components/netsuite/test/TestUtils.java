@@ -30,6 +30,7 @@ import org.talend.components.netsuite.client.NsRef;
 import org.talend.components.netsuite.client.model.BasicMetaData;
 import org.talend.components.netsuite.client.model.CustomFieldDesc;
 import org.talend.components.netsuite.client.model.CustomRecordTypeInfo;
+import org.talend.components.netsuite.client.model.CustomTransactionTypeInfo;
 import org.talend.components.netsuite.client.model.RecordTypeDesc;
 import org.talend.components.netsuite.client.model.RefType;
 import org.talend.components.netsuite.client.model.customfield.CustomFieldRefType;
@@ -94,6 +95,16 @@ public class TestUtils {
 
         RecordTypeDesc recordTypeDesc = basicMetaData.getRecordType(recordType);
         CustomRecordTypeInfo recordTypeInfo = new CustomRecordTypeInfo(scriptId, recordTypeDesc, ref);
+
+        return recordTypeInfo;
+    }
+    
+    public static CustomTransactionTypeInfo readCustomTransaction(BasicMetaData basicMetaData, JsonNode node) {
+        String scriptId = node.get("scriptId").asText();
+        String recordType = node.get("recordType").asText();
+
+        RecordTypeDesc recordTypeDesc = basicMetaData.getRecordType(recordType);
+        CustomTransactionTypeInfo recordTypeInfo = new CustomTransactionTypeInfo(scriptId, recordTypeDesc);
 
         return recordTypeInfo;
     }

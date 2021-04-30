@@ -41,6 +41,7 @@ import org.talend.components.netsuite.client.model.TypeDesc;
 
 import com.netsuite.webservices.test.platform.NetSuitePortType;
 import com.netsuite.webservices.test.platform.core.CustomRecordRef;
+import com.netsuite.webservices.test.platform.core.CustomTransactionRef;
 import com.netsuite.webservices.test.platform.core.RecordRef;
 import com.netsuite.webservices.test.platform.core.types.RecordType;
 import com.netsuite.webservices.test.setup.customization.CustomRecord;
@@ -240,6 +241,36 @@ public class NetSuiteOutputTransducerTest extends NetSuiteMockTestBase {
             CustomRecordRef recordRef = (CustomRecordRef) transducer.write(indexedRecord);
             assertNotNull(recordRef.getInternalId());
             assertNotNull(recordRef.getTypeId());
+        }
+    }
+    
+    @Test
+    public void testCustomTransactionRecord() throws Exception {
+
+        CustomMetaDataSource customMetaDataSource = new TestCustomMetaDataSource(clientService);
+        clientService.getMetaDataSource().setCustomMetaDataSource(customMetaDataSource);
+        NetSuiteDatasetRuntime dataSetRuntime = new NetSuiteDatasetRuntimeImpl(clientService.getMetaDataSource());
+        mockGetRequestResults(null);
+
+        TypeDesc typeDesc = clientService.getMetaDataSource().getTypeInfo("customTransaction_1");
+
+        Schema schema = dataSetRuntime.getSchema(typeDesc.getTypeName());
+
+        NsObjectOutputTransducer transducer = new NsObjectOutputTransducer(
+                webServiceMockTestFixture.getClientService(), typeDesc.getTypeName());
+        transducer.setReference(true);
+
+        GenericRecord indexedRecordToAdd = new GenericData.Record(schema);
+
+        indexedRecordToAdd.put("InternalId", "987654321");
+
+        List<IndexedRecord> indexedRecordList = new ArrayList<>();
+        indexedRecordList.add(indexedRecordToAdd);
+
+        for (IndexedRecord indexedRecord : indexedRecordList) {
+            CustomTransactionRef transaction = (CustomTransactionRef) transducer.write(indexedRecord);
+            assertEquals("987654321", transaction.getInternalId());
+            assertEquals("customTransaction_1", transaction.getScriptId());
         }
     }
 
