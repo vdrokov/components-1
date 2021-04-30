@@ -73,6 +73,7 @@ public class TSalesforceBulkExecPropertiesTest extends SalesforceTestBase {
 
         assertEquals(Boolean.TRUE, properties.connection.bulkConnection.getValue());
         assertEquals(Boolean.FALSE, properties.connection.httpChunked.getValue());
+        assertEquals(TSalesforceBulkExecProperties.ContentType.CSV,properties.contentType.getValue());
         assertTrue(properties.upsertRelationTable.isUsePolymorphic());
     }
 

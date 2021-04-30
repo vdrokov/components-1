@@ -33,6 +33,7 @@ import org.talend.components.api.component.runtime.WriteOperation;
 import org.talend.components.api.component.runtime.Writer;
 import org.talend.components.salesforce.SalesforceBulkProperties.Concurrency;
 import org.talend.components.salesforce.SalesforceConnectionProperties;
+import org.talend.components.salesforce.runtime.SalesforceBulkExecRuntime;
 import org.talend.components.salesforce.runtime.SalesforceBulkFileSink;
 import org.talend.components.salesforce.runtime.SalesforceSource;
 import org.talend.components.salesforce.tsalesforcebulkexec.TSalesforceBulkExecDefinition;
@@ -67,6 +68,18 @@ public class SalesforceRuntimeTestUtil {
     private final Schema schema4 = SchemaBuilder.builder().record("Schema").fields().name("Id").type().stringType().noDefault()
             .name("FirstName").type().nullable().stringType().noDefault().name("LastName").type().nullable().stringType()
             .noDefault().name("Phone").type().nullable().stringType().noDefault().endRecord();
+
+    private final Schema schema5 = SchemaBuilder.builder().record("Schema").fields().name("Id").type().stringType().noDefault()
+            .name("FirstName").type().nullable().stringType().noDefault().name("LastName").type().nullable().stringType()
+            .noDefault().name("Phone").type().nullable().stringType().noDefault().name("salesforce_id").type().stringType()
+            .noDefault().name("Success").type().stringType()
+            .noDefault().endRecord();
+
+    private final Schema schema6 = SchemaBuilder.builder().record("Schema").fields().name("Id").type().stringType().noDefault()
+            .name("FirstName").type().nullable().stringType().noDefault().name("LastName").type().nullable().stringType()
+            .noDefault().name("Phone").type().nullable().stringType().noDefault().name("Success").type().stringType().noDefault()
+            .name("salesforce_created").type().stringType().noDefault().endRecord();
+
 
     private final String module = "Contact";
 
@@ -112,6 +125,14 @@ public class SalesforceRuntimeTestUtil {
 
     public Schema getTestSchema4() {
         return schema4;
+    }
+
+    public Schema getTestSchema5() {
+        return schema5;
+    }
+
+    public Schema getTestSchema6() {
+        return schema6;
     }
 
     public List<Map<String, String>> getTestData() {
@@ -312,6 +333,33 @@ public class SalesforceRuntimeTestUtil {
 
         Reader reader = source.createReader(null);
         return reader;
+    }
+
+    public SalesforceBulkExecRuntime initBulk(TSalesforceBulkExecDefinition definition, String data_file,
+            TSalesforceBulkExecProperties modelProperties, Schema schema, Schema output) {
+        modelProperties.connection.userPassword.userId.setValue(username);
+        modelProperties.connection.userPassword.password.setValue(password);
+        modelProperties.connection.userPassword.securityKey.setValue(securityKey);
+
+        modelProperties.connection.timeout.setValue(60000);
+        modelProperties.connection.bulkConnection.setValue(true);
+        modelProperties.bulkFilePath.setValue(data_file);
+        modelProperties.bulkProperties.bytesToCommit.setValue(10 * 1024 * 1024);
+        modelProperties.bulkProperties.rowsToCommit.setValue(10000);
+        modelProperties.bulkProperties.concurrencyMode.setValue(Concurrency.Parallel);
+        modelProperties.bulkProperties.waitTimeCheckBatchState.setValue(10000);
+
+        modelProperties.module.moduleName.setValue(module);
+        modelProperties.module.main.schema.setValue(schema);
+        modelProperties.schemaFlow.schema.setValue(output);
+
+        SalesforceBulkExecRuntime bulk = new SalesforceBulkExecRuntime();
+        bulk.initialize(null,modelProperties);
+        ValidationResult vr = bulk.validate(null);
+        if (vr.getStatus() == ValidationResult.Result.ERROR) {
+            Assert.fail(vr.getMessage());
+        }
+        return bulk;
     }
 
 }

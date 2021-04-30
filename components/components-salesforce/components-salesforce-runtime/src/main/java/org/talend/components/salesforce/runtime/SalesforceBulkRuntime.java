@@ -14,12 +14,14 @@ package org.talend.components.salesforce.runtime;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,10 +46,16 @@ import org.talend.daikon.exception.error.DefaultErrorCode;
 import org.talend.daikon.i18n.GlobalI18N;
 import org.talend.daikon.i18n.I18nMessages;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sforce.async.AsyncApiException;
 import com.sforce.async.AsyncExceptionCode;
 import com.sforce.async.BatchInfo;
 import com.sforce.async.BatchInfoList;
+import com.sforce.async.BatchResult;
 import com.sforce.async.BatchStateEnum;
 import com.sforce.async.BulkConnection;
 import com.sforce.async.CSVReader;
@@ -57,6 +65,7 @@ import com.sforce.async.JobInfo;
 import com.sforce.async.JobStateEnum;
 import com.sforce.async.OperationEnum;
 import com.sforce.async.QueryResultList;
+import com.sforce.async.Result;
 import com.sforce.ws.ConnectionException;
 
 /**
@@ -203,11 +212,7 @@ public class SalesforceBulkRuntime {
         }
         this.externalIdFieldName = externalIdFieldName;
 
-        if ("csv".equals(contentTypeStr)) {
-            contentType = ContentType.CSV;
-        } else if ("xml".equals(contentTypeStr)) {
-            contentType = ContentType.XML;
-        }
+        contentType = ContentType.valueOf(contentTypeStr);
         this.bulkFileName = bulkFileName;
 
         int sforceMaxBytes = 10 * 1024 * 1024;
@@ -220,19 +225,36 @@ public class SalesforceBulkRuntime {
             String bulkFileName, int maxBytes, int maxRows) throws AsyncApiException, ConnectionException, IOException {
         setBulkOperation(sObjectType, userOperation, hardDelete, externalIdFieldName, contentTypeStr, bulkFileName, maxBytes, maxRows);
         job = createJob();
-        batchInfoList = createBatchesFromCSVFile();
-        closeJob();
-        awaitCompletion();
-        prepareLog();
+        if("JSON".equals(contentTypeStr)){
+            batchInfoList =  createBatchesFromJSONFile();
+            closeJob();
+            awaitCompletion();
+            prepareJsonLog();
+        }else {
+            batchInfoList =  createBatchesFromCSVFile();
+            closeJob();
+            awaitCompletion();
+            prepareCSVLog();
+        }
+
     }
 
-    private void prepareLog() throws IOException {
+    private void prepareCSVLog() throws IOException {
         br = new BufferedReader(new InputStreamReader(new FileInputStream(bulkFileName), FILE_ENCODING));
         baseFileReader = new com.csvreader.CsvReader(br, ',');
         baseFileReader.setSafetySwitch(safetySwitch);
         if (baseFileReader.readRecord()) {
             baseFileHeader = Arrays.asList(baseFileReader.getValues());
         }
+    }
+
+    JsonParser jsonParserLog;
+    RandomAccessFile readLog;
+
+    private void prepareJsonLog() throws IOException{
+        JsonFactory jsonFactory = new JsonFactory();
+        jsonParserLog = jsonFactory.createParser(new FileInputStream(bulkFileName));
+        readLog = new RandomAccessFile(bulkFileName,"r");
     }
 
     public void setConcurrencyMode(Concurrency mode) {
@@ -365,6 +387,115 @@ public class SalesforceBulkRuntime {
         return batchInfos;
     }
 
+
+
+    /**
+     * Create and upload batches using a Json file. The file into the appropriate size batch files.
+     *
+     * @return
+     * @throws IOException
+     * @throws AsyncApiException
+     * @throws ConnectionException
+     */
+    private List<BatchInfo> createBatchesFromJSONFile() throws IOException, AsyncApiException, ConnectionException {
+        List<BatchInfo> batchInfos = new ArrayList<BatchInfo>();
+        long startTime = System.currentTimeMillis();
+        JsonFactory jsonFactory = new JsonFactory();
+        int bucket = 0;
+        int recordCount = 0;
+        long recordStart = 0l;//offset of last record start
+        long recodeEnd = 0l;//offset of last record end
+        long offset = 0l;//batch offset
+        try (JsonParser jsonParser = jsonFactory.createParser(new FileInputStream(bulkFileName))) {
+
+            if (JsonToken.START_ARRAY != jsonParser.nextToken()) {
+                throw new ComponentException(new IOException(MESSAGES.getMessage("error.bulk.jsonArray")));
+            }
+
+            while (jsonParser.nextToken() != null) {
+                switch (jsonParser.currentToken()) {
+                case START_OBJECT:
+                    if (bucket == 0) {
+                        recordStart = jsonParser.getCurrentLocation().getByteOffset() - 1;
+                        if (recordCount == 0) {
+                            offset = recordStart;
+                        }
+                    }
+                    bucket++;
+                    break;
+                case END_OBJECT:
+                    if (--bucket == 0) {
+                        recordCount++;
+                        final long current = jsonParser.getCurrentLocation().getByteOffset();
+
+                        if (current - offset > maxBytesPerBatch) {
+                            LOGGER.debug("maxBytes {} reached.", maxBytesPerBatch);
+                            createJsonBatch(offset, recodeEnd - offset, batchInfos);
+                            recordCount = 1;
+                            offset = recordStart;
+                        }
+                        recodeEnd = current;
+
+                        if (recordCount == maxRowsPerBatch) {
+                            LOGGER.debug("maxRecordAmount {} reached.", maxRowsPerBatch);
+                            createJsonBatch(offset, recodeEnd - offset, batchInfos);
+                            recordCount = 0;
+                            recordStart = 0;
+                        }
+
+                    }
+                    break;
+                }
+            }
+        }
+        LOGGER.debug("End of File reached");
+        LOGGER.debug("RecordCount: {}", recordCount);
+        if(recordCount>0) {
+            createJsonBatch(offset, recodeEnd - offset, batchInfos);
+        }
+
+        long endTime = System.currentTimeMillis();
+
+        LOGGER.debug("Last time: {} milliseconds", (endTime - startTime));
+
+        return batchInfos;
+    }
+
+    private void createJsonBatch(long offset,long length,List<BatchInfo> batchInfos)
+            throws IOException, AsyncApiException, ConnectionException {
+
+        File tmpFile = File.createTempFile("sforceBulkAPI", ".json");
+        LOGGER.debug("Temp File: " + tmpFile +" Created with offset " + offset + " ,length: " + length);
+
+        try (RandomAccessFile read = new RandomAccessFile(bulkFileName,"r");
+                FileOutputStream fileOutputStream = new FileOutputStream(tmpFile)){
+            read.seek(offset);
+            fileOutputStream.write(91);//write ARRAY_START
+            byte[] buffer = new byte[8192];
+            for (;length > 0;length -= 8192){
+                if(length >= 8192){
+                    read.read(buffer);
+                    fileOutputStream.write(buffer);
+                }else {
+                    int lastPart = Long.valueOf(length).intValue();
+                    read.read(buffer,0, lastPart);
+                    fileOutputStream.write(buffer,0, lastPart);
+                }
+            }
+            fileOutputStream.write(93);// write ARRAY_END
+            fileOutputStream.flush();
+        }
+
+        try (FileInputStream tmpInputStream = new FileInputStream(tmpFile)){
+            BatchInfo batchInfo = createBatchFromStream(job, tmpInputStream);
+            LOGGER.debug("Batch Infor: " +batchInfo);
+            batchInfos.add(batchInfo);
+        } finally {
+            tmpFile.delete();
+        }
+
+    }
+
     /**
      * Create a batch by uploading the contents of the file. This closes the output stream.
      *
@@ -380,12 +511,9 @@ public class SalesforceBulkRuntime {
             throws IOException, AsyncApiException, ConnectionException {
         tmpOut.flush();
         tmpOut.close();
-        FileInputStream tmpInputStream = new FileInputStream(tmpFile);
-        try {
+        try(FileInputStream tmpInputStream = new FileInputStream(tmpFile)) {
             BatchInfo batchInfo = createBatchFromStream(job, tmpInputStream);
             batchInfos.add(batchInfo);
-        } finally {
-            tmpInputStream.close();
         }
     }
 
@@ -464,6 +592,55 @@ public class SalesforceBulkRuntime {
         return dataInfo;
     }
 
+    private BulkResult getJsonBaseFileRow() throws IOException {
+        final  BulkResult result = new BulkResult();
+        ObjectMapper record = new ObjectMapper();
+        String nextRecord = getNextRecord();
+        JsonNode jsonNode = record.readTree(nextRecord);
+        Iterator<String> stringIterator = jsonNode.fieldNames();
+        stringIterator.forEachRemaining(e->result.setValue(e,jsonNode.get(e).asText()));
+        return result;
+    }
+
+    long recodeEnd = 0l;//offset of last record end
+    long offset = 0l;//batch offset
+
+    private String getNextRecord() throws IOException {
+        int bucket = 0;
+        while(jsonParserLog.nextToken() != null){
+            switch (jsonParserLog.currentToken()){
+            case START_OBJECT:
+
+                if(bucket==0){
+                    offset = jsonParserLog.getCurrentLocation().getByteOffset()-1;
+                }
+                bucket++;
+                break;
+            case END_OBJECT:
+                if(--bucket==0){
+                    recodeEnd = jsonParserLog.getCurrentLocation().getByteOffset();
+                    long length = recodeEnd - offset;
+                    byte[] buffer = new byte[8192];
+                    StringBuilder content = new StringBuilder();
+                    readLog.seek(offset);
+                    for (;length > 0;length -= 8192) {
+                        if (length >= 8192) {
+                            readLog.read(buffer);
+                        } else {
+                            int lastPart = Long.valueOf(length).intValue();
+                            readLog.read(buffer, 0, lastPart);
+                        }
+                        content.append(new String(buffer));
+                    }
+                    return content.toString();
+                }
+                break;
+            }
+        }
+        return "";
+
+    }
+
     /**
      * Gets the results of the operation and checks for errors.
      *
@@ -479,7 +656,36 @@ public class SalesforceBulkRuntime {
 
     }
 
-    public List<BulkResult> getBatchLog(int batchNum, String upsertKeyName)
+    protected List<BulkResult> getBatchLog(int batchNum, String upsertKeyName)
+            throws AsyncApiException, IOException, ConnectionException {
+        if(ContentType.JSON.equals(contentType)){
+            return getJSONBatchLog(batchNum,upsertKeyName);
+        }else{
+            return getCSVBatchLog(batchNum,upsertKeyName);
+        }
+    }
+
+    public List<BulkResult> getJSONBatchLog(int batchNum, String upsertKeyName)
+            throws AsyncApiException, IOException, ConnectionException {
+        BatchInfo b = batchInfoList.get(batchNum);
+        BatchResult batchResult = getBatchResult(job.getId(), b.getId());
+        Result[] results = batchResult.getResult();
+        List<BulkResult> collect = new ArrayList<>();
+
+        for(Result r : results){
+            BulkResult resultInfo = new BulkResult();
+            resultInfo.copyValues(getJsonBaseFileRow());
+            resultInfo.setValue("salesforce_created", String.valueOf(r.getCreated()));
+            resultInfo.setValue("salesforce_id", r.getId());
+            resultInfo.setValue("Success", String.valueOf(r.getSuccess()));
+            resultInfo.setValue("Error", Arrays.toString(r.getErrors()));
+            collect.add(resultInfo);
+        }
+        return collect;
+
+    }
+
+    public List<BulkResult> getCSVBatchLog(int batchNum, String upsertKeyName)
             throws AsyncApiException, IOException, ConnectionException {
         // batchInfoList was populated when batches were created and submitted
         List<BulkResult> resultInfoList = new ArrayList<BulkResult>();
@@ -663,7 +869,7 @@ public class SalesforceBulkRuntime {
 
     protected BatchInfoList getBatchInfoList(String jobID) throws AsyncApiException, ConnectionException {
         try {
-            return bulkConnection.getBatchInfoList(jobID);
+            return bulkConnection.getBatchInfoList(jobID,contentType);
         } catch (AsyncApiException sfException) {
             if (AsyncExceptionCode.InvalidSessionId.equals(sfException.getExceptionCode())) {
                 SalesforceRuntimeCommon.renewSession(bulkConnection.getConfig());
@@ -680,6 +886,18 @@ public class SalesforceBulkRuntime {
             if (AsyncExceptionCode.InvalidSessionId.equals(sfException.getExceptionCode())) {
                 SalesforceRuntimeCommon.renewSession(bulkConnection.getConfig());
                 return getBatchResultStream(jobID, batchID);
+            }
+            throw sfException;
+        }
+    }
+
+    protected BatchResult getBatchResult(String jobID, String batchID) throws AsyncApiException, ConnectionException {
+        try {
+            return bulkConnection.getBatchResult(jobID, batchID,contentType);
+        } catch (AsyncApiException sfException) {
+            if (AsyncExceptionCode.InvalidSessionId.equals(sfException.getExceptionCode())) {
+                SalesforceRuntimeCommon.renewSession(bulkConnection.getConfig());
+                return getBatchResult(jobID, batchID);
             }
             throw sfException;
         }
@@ -710,9 +928,25 @@ public class SalesforceBulkRuntime {
     }
 
     public void close() throws IOException {
-        if (br != null) {
-            br.close();
+        closeResources(br,readLog,jsonParserLog);
+    }
+
+    private void closeResources(Closeable... resources) throws IOException {
+
+        List<IOException> exceptions = new ArrayList<>();
+        for (Closeable closeable : resources) {
+            if (closeable!=null){
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    exceptions.add(e);
+                }
+            }
         }
+        if(exceptions.size()>0){
+            throw exceptions.get(0);
+        }
+
     }
 
     protected QueryResultList getQueryResultList(String jobID, String batchID) throws AsyncApiException, ConnectionException {

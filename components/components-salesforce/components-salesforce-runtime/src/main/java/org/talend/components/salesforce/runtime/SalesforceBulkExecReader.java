@@ -65,7 +65,7 @@ final class SalesforceBulkExecReader extends SalesforceReader {
             // We only support CSV file for bulk output
             bulkRuntime
                     .executeBulk(sprops.module.moduleName.getStringValue(), sprops.outputAction.getValue(),
-                            sprops.hardDelete.getValue(), sprops.upsertKeyColumn.getStringValue(), "csv",
+                            sprops.hardDelete.getValue(), sprops.upsertKeyColumn.getStringValue(), sprops.contentType.getStringValue(),
                             sprops.bulkFilePath.getStringValue(), sprops.bulkProperties.bytesToCommit.getValue(),
                             sprops.bulkProperties.rowsToCommit.getValue());
             if (bulkRuntime.getBatchCount() > 0) {
@@ -134,7 +134,7 @@ final class SalesforceBulkExecReader extends SalesforceReader {
             throw new ComponentException(e);
         }
 
-        if ("true".equalsIgnoreCase((String) result.getValue("Success"))) {
+        if ("true".equalsIgnoreCase(String.valueOf( result.getValue("Success")))) {
             return record;
         } else {
             Map<String, Object> resultMessage = new HashMap<String, Object>();
@@ -143,7 +143,7 @@ final class SalesforceBulkExecReader extends SalesforceReader {
                         .put("UpsertColumnValue", result
                                 .getValue(((TSalesforceBulkExecProperties) properties).upsertKeyColumn.getValue()));
             }
-            String error = (String) result.getValue("Error");
+            String error = String.valueOf( result.getValue("Error"));
             resultMessage.put("error", error);
             resultMessage.put("talend_record", record);
             throw new DataRejectException(resultMessage);

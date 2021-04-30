@@ -43,15 +43,21 @@ public class TSalesforceOutputBulkExecProperties extends TSalesforceBulkExecProp
         super.setupLayout();
         Form mainForm = getForm(Form.MAIN);
         mainForm.addRow(outputBulkProperties.getForm(Form.REFERENCE));
+        mainForm.getWidget(contentType.getName()).setVisible(false);
     }
 
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
         outputBulkProperties.outputAction.setValue(this.outputAction.getValue());
+        if (Form.MAIN.equals(form.getName())) {
+            form.getWidget(contentType.getName()).setVisible(false);
+        }
         if (Form.ADVANCED.equals(form.getName())) {
             boolean isUpsert = OutputAction.UPSERT.equals(outputAction.getValue());
             form.getWidget(upsertRelationTable.getName()).setHidden(!isUpsert);
+            Form main = getForm(Form.MAIN);
+            main.getWidget(contentType.getName()).setVisible(false);
         }
     }
 

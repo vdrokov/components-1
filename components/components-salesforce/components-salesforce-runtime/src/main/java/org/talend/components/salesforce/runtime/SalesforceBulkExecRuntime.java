@@ -79,7 +79,7 @@ public class SalesforceBulkExecRuntime extends SalesforceSourceOrSink
             // We only support CSV file for bulk output
             bulkRuntime
                     .executeBulk(sprops.module.moduleName.getStringValue(), sprops.outputAction.getValue(),
-                            sprops.hardDelete.getValue(), sprops.upsertKeyColumn.getStringValue(), "csv",
+                            sprops.hardDelete.getValue(), sprops.upsertKeyColumn.getStringValue(), sprops.contentType.getStringValue(),
                             sprops.bulkFilePath.getStringValue(), sprops.bulkProperties.bytesToCommit.getValue(),
                             sprops.bulkProperties.rowsToCommit.getValue());
             // count results

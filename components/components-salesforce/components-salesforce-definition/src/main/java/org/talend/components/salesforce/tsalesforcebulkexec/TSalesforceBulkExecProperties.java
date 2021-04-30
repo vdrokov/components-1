@@ -33,6 +33,7 @@ import org.talend.components.salesforce.tsalesforceconnection.TSalesforceConnect
 import org.talend.daikon.avro.SchemaConstants;
 import org.talend.daikon.properties.presentation.Form;
 import org.talend.daikon.properties.presentation.Widget;
+import org.talend.daikon.properties.property.EnumProperty;
 import org.talend.daikon.properties.property.Property;
 
 public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
@@ -42,6 +43,8 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
     public SalesforceBulkProperties bulkProperties = new SalesforceBulkProperties("bulkProperties");
 
     public Property<Boolean> outputUpsertKey = newBoolean("outputUpsertKey");
+
+    public Property<ContentType> contentType = new EnumProperty(ContentType.class, "contentType");
 
     public TSalesforceBulkExecProperties(String name) {
         super(name);
@@ -53,6 +56,7 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
         Form mainForm = getForm(Form.MAIN);
         mainForm.addRow(outputUpsertKey);
         mainForm.addRow(widget(bulkFilePath).setWidgetType(Widget.FILE_WIDGET_TYPE));
+        mainForm.addRow(contentType);
 
         Form advancedForm = getForm(Form.ADVANCED);
         advancedForm.addRow(widget(bulkProperties.getForm(Form.MAIN)));
@@ -62,9 +66,9 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
     @Override
     public void refreshLayout(Form form) {
         super.refreshLayout(form);
-
         if (Form.MAIN.equals(form.getName())) {
             form.getWidget(outputUpsertKey.getName()).setVisible(OutputAction.UPSERT.equals(outputAction.getValue()));
+            form.getWidget(contentType.getName()).setVisible(!isBulkV2());
         }
 
         if (Form.ADVANCED.equals(form.getName())) {
@@ -74,16 +78,12 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
 
             Form bulkForm = form.getChildForm(bulkProperties.getName());
             if (bulkForm != null) {
-                SalesforceConnectionProperties sfConn = getEffectiveConnProperties();
-                // Note: Avoid issue when job which migrate from old framework, the reference properties is missing
-                boolean oauthLogin = (sfConn != null)
-                        && SalesforceConnectionProperties.LoginType.OAuth.equals(sfConn.loginType.getStoredValue());
-                bulkForm.getWidget(bulkProperties.bulkApiV2.getName()).setVisible(oauthLogin);
-                boolean useBulkApiV2 = oauthLogin && bulkProperties.bulkApiV2.getValue();
+                boolean useBulkApiV2 = isBulkV2();
                 bulkForm.getWidget(bulkProperties.rowsToCommit.getName()).setVisible(!useBulkApiV2);
                 bulkForm.getWidget(bulkProperties.bytesToCommit.getName()).setVisible(!useBulkApiV2);
                 Form main = getForm(Form.MAIN);
                 main.getWidget(hardDelete.getName()).setVisible(!useBulkApiV2 && outputAction.getValue().equals(OutputAction.DELETE));
+                main.getWidget(contentType.getName()).setVisible(!useBulkApiV2);
                 bulkForm.getWidget(bulkProperties.concurrencyMode.getName()).setVisible(!useBulkApiV2);
                 bulkForm.getWidget(bulkProperties.columnDelimiter.getName()).setVisible(useBulkApiV2);
                 bulkForm.getWidget(bulkProperties.lineEnding.getName()).setVisible(useBulkApiV2);
@@ -94,6 +94,26 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
         }
     }
 
+    private boolean isBulkV2(){
+        Form adv = getForm(Form.ADVANCED);
+        Form bulkForm = adv.getChildForm(bulkProperties.getName());
+        if(bulkForm != null) {
+            SalesforceConnectionProperties sfConn = getEffectiveConnProperties();
+            // Note: Avoid issue when job which migrate from old framework, the reference properties is missing
+            boolean oauthLogin = (sfConn != null) && SalesforceConnectionProperties.LoginType.OAuth.equals(sfConn.loginType.getStoredValue());
+            bulkForm.getWidget(bulkProperties.bulkApiV2.getName()).setVisible(oauthLogin);
+            return oauthLogin && bulkProperties.bulkApiV2.getValue();
+        }
+        return false;
+    }
+
+    public void afterLoginType(){
+        if(SalesforceConnectionProperties.LoginType.Basic.equals(connection.loginType.getStoredValue())){
+            refreshLayout(getForm(Form.MAIN));
+        }
+
+    }
+
     @Override
     public void setupProperties() {
         super.setupProperties();
@@ -101,6 +121,7 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
         connection.bulkConnection.setValue(true);
         connection.httpChunked.setValue(false);
         upsertRelationTable.setUsePolymorphic(true);
+        contentType.setValue(ContentType.CSV);
 
         module.setSchemaListener(new ISchemaListener() {
 
@@ -242,6 +263,11 @@ public class TSalesforceBulkExecProperties extends SalesforceOutputProperties {
         refreshLayout(getForm(Form.MAIN));
         refreshLayout(getForm(Form.ADVANCED));
         updateOutputSchemas();
+    }
+
+    public enum ContentType {
+        CSV,
+        JSON
     }
 
 }
