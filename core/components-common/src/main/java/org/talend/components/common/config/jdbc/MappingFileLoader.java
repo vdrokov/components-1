@@ -14,6 +14,7 @@ package org.talend.components.common.config.jdbc;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MappingFileLoader {
 
     /**
      * Parses configuration mapping files and returns a list of {@link Dbms}
-     * 
+     *
      * @param path path to configuration file
      * @return list of {@link Dbms}
      */
@@ -46,7 +47,7 @@ public class MappingFileLoader {
 
     /**
      * Parses configuration mapping files and returns a list of {@link Dbms}
-     * 
+     *
      * @param file configuration file
      * @return list of {@link Dbms}
      */
@@ -68,9 +69,27 @@ public class MappingFileLoader {
         return null;
     }
 
+    public List<Dbms> load(URL file) {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+        try {
+            DocumentBuilder analyser = documentBuilderFactory.newDocumentBuilder();
+            Document document = analyser.parse(file.openConnection().getInputStream());
+            NodeList dbmsNodes = document.getElementsByTagName("dbms");
+            return constructAllDbms(dbmsNodes);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * Constructs all DBMS from DOM
-     * 
+     *
      * @param dbmsNodes
      * @return
      */
@@ -85,7 +104,7 @@ public class MappingFileLoader {
 
     /**
      * Construct single DBMS from DOM Element
-     * 
+     *
      * @param dbmsNode
      * @return
      */
@@ -153,7 +172,7 @@ public class MappingFileLoader {
 
     /**
      * Constructs db type from DOM object
-     * 
+     *
      * @param dbTypeNode
      */
     private void constructDbmsType(Element dbTypeNode, Dbms dbms) {
@@ -225,7 +244,7 @@ public class MappingFileLoader {
 
     /**
      * Get children of type ELEMENT_NODE from parent <code>parentNode</code>.
-     * 
+     *
      * @param parentNode
      * @return
      */

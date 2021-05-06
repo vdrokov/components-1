@@ -436,10 +436,24 @@ public class CommonUtils {
         }
 
         MappingFileLoader fileLoader = new MappingFileLoader();
-        List<Dbms> dbmsList = fileLoader.load(mappingFileFullPath);
-        Dbms dbms = dbmsList.get(0);
+        List<Dbms> dbmsList = null;
 
+        boolean inOSGi = BundleUtils.inOSGi();
+        if (inOSGi) {
+            URL fileUrl = BundleUtils.getFile(separatorsToSystem(mappingFileFullPath.getPath()));
+            dbmsList = fileLoader.load(fileUrl);
+        } else {
+            dbmsList = fileLoader.load(mappingFileFullPath);
+        }
+
+        Dbms dbms = dbmsList.get(0);
         return dbms;
+    }
+
+    private static String separatorsToSystem(String res) {
+        if (res==null) return null;
+
+        return res.replace('\\', '/');
     }
 
     public static Dbms getMapping(String mappingFilesDir, AllSetting setting,
